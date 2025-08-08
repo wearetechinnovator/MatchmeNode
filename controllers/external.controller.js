@@ -103,7 +103,7 @@ const matchCronSetup = async (req, res) => {
         const { week_day, time } = req.body;
 
         if ([week_day, time].some((field) => !field || field == "")) {
-            return res.status(400).json({ message: "Require all fields" });
+            return res.status(400).json({ err: "Require all fields" });
         }
 
         const updateData = {
@@ -124,7 +124,7 @@ const matchCronSetup = async (req, res) => {
 
     } catch (error) {
         console.error("Error setting up match cron:", error);
-        return res.status(500).json({ message: "Internal server error." });
+        return res.status(500).json({ err: "Internal server error." });
     }
 
 };
@@ -145,14 +145,14 @@ const allUserCount = async (req, res) => {
         } else if (type === 3) {
             count = await usersModel.countDocuments({ is_subscribed: false, is_del: false });
         } else {
-            return res.status(400).json({ message: "Invalid type value." });
+            return res.status(400).json({ err: "Invalid type value." });
         }
 
         return res.status(200).json({ count });
 
     } catch (error) {
         console.error("Error fetching user count:", error);
-        return res.status(500).json({ message: "Internal server error." });
+        return res.status(500).json({ err: "Internal server error." });
     }
 };
 
@@ -181,7 +181,7 @@ const changeSubscriptionStatus = async (req, res) => {
             return res.status(500).json({ err: "Update subscription failed" })
         }
 
-        return res.status(200).json({ success: true });
+        return res.status(200).json({ message: "Subscription change successfully" });
 
     } catch (error) {
         console.log("Error: ", error);
@@ -246,7 +246,7 @@ const getAllUser = async (req, res) => {
         } else if (type === 3) {
             filter.is_subscribed = false;
         } else if (type !== 1) {
-            return res.status(400).json({ message: "Invalid type value." });
+            return res.status(400).json({ err: "Invalid type value." });
         }
 
         const [count, users] = await Promise.all([
@@ -264,7 +264,7 @@ const getAllUser = async (req, res) => {
 
     } catch (error) {
         console.error("Error fetching users with pagination:", error);
-        return res.status(500).json({ message: "Internal server error." });
+        return res.status(500).json({ err: "Internal server error." });
     }
 };
 
@@ -292,7 +292,7 @@ const getUserDetails = async (req, res) => {
 
     } catch (error) {
         console.error("Error fetching user data:", error);
-        return res.status(500).json({ message: "Internal server error." });
+        return res.status(500).json({ err: "Internal server error." });
     }
 };
 
@@ -407,7 +407,7 @@ const getConnection = async (req, res) => {
         ]);
 
         if (!result || result.length === 0) {
-            return res.status(404).json({ msg: "No Connection Available" });
+            return res.status(404).json({ err: "No Connection Available" });
         }
 
         return res.status(200).json(result);
