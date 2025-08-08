@@ -83,7 +83,7 @@ const register = async (req, res) => {
         }
 
         return res.status(200).json({
-            username: username,
+            username: user_name,
             password: pass
         })
 
