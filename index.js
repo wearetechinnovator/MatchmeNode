@@ -7,8 +7,11 @@ const checkSubscription = require("./services/subscriptionCron");
 const { matchCron } = require("./services/matchCron");
 const PORT = 8080 || process.env.PORT
 const app = express();
+const cors = require("cors");
 
 
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("uploads")); // Serve static files from the uploads directory
