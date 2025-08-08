@@ -1,13 +1,8 @@
-const { register, update, login, get, upload, viewPhoto, changeSubscriptionStatus } = require("../controllers/user.controller");
+const { update, login, get, upload, viewPhoto } = require("../controllers/user.controller");
 const middleware = require("../middleware/middleware");
 const router = require("express").Router();
 const imageMiddleware = require("../helper/imageUpload");
 
-
-
-router
-    .route("/register")
-    .post(register);
 
 
 router

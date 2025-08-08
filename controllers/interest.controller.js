@@ -4,6 +4,7 @@ const moment = require("moment-timezone");
 const connectionModel = require("../models/connection.model");
 const sendNotification = require("../services/sendNotification");
 const { getToken } = require("./notification.controller");
+const usersModel = require("../models/users.model");
 
 
 
@@ -76,17 +77,18 @@ const sendInterest = async (req, res) => {
         }
 
         // Get matchuser info
-        const matchUser = await matchModel.findOne({ user_id: matchUserId });
+        const matchUser = await usersModel.findOne({ _id: matchUserId });
+        console.log(matchUser);
 
         // ::::::::::::::::::::::: Send and Store Notification :::::::::::::::::;
         // Only for `send` interest notification send;
         if (type === 1) {
             const FCMtoken = await getToken(matchUserId);
             await sendNotification({
-                token: FCMtoken,
+                tokens: FCMtoken,
                 userId: matchUserId,
-                body: "You’ve received a new interest.",
-                title: `${matchUser.full_name} has shown interest in you`,
+                title: "You’ve received a new interest.",
+                body: `${matchUser.full_name} has shown interest in you`,
                 type: "interest"
             });
 
@@ -220,7 +222,7 @@ const sendConnection = async (req, res) => {
         // ::::::::::::::::::::::: Send and Store Notification :::::::::::::::::;
         const FCMtoken = await getToken(connectionUserId);
         await sendNotification({
-            token: FCMtoken,
+            tokens: FCMtoken,
             userId: connectionUserId,
             title: "You’ve made a new connection.",
             body: `${userData.full_name} is now connected with you.`,

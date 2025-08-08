@@ -19,17 +19,17 @@ app.use("/api/v1", router);
 
 
 
+// app.get("/notify", async (req, res) => {
+//     await sendNotification({
+//         tokens: ["eEqfdJOVSwm5BpDbbkaQKI:APA91bGnN5GoWwxMNITXH-bOG5dtAnA2Etrlr8l2RscdM0XvaBNQCnsS1vsXwibqSeduFTWDFoyr_aaJ48mj81-mLit1e6YGE38P66GrJEm04gRTLV-ErGM"],
+//         title: req.body.title,
+//         body: req.body.body
+//     });
 
-app.get("/notify", async (req, res) => {
-    await sendNotification({
-        token: "eEqfdJOVSwm5BpDbbkaQKI:APA91bGnN5GoWwxMNITXH-bOG5dtAnA2Etrlr8l2RscdM0XvaBNQCnsS1vsXwibqSeduFTWDFoyr_aaJ48mj81-mLit1e6YGE38P66GrJEm04gRTLV-ErGM",
-        title: "hello this",
-        body: "world"
-    });
+//     return res.send("send...");
 
-    return res.send("send...");
+// })
 
-})
 
 
 // Run CORN Jobs
@@ -41,7 +41,7 @@ matchCron();
 connection().then(con => {
     if (con) {
         app.listen(PORT, () => {
-            console.log("[*] Server running on http://localhost:" + PORT);
+            console.log("[*] Server running on " + PORT);
         })
     } else {
         console.log("[*] Database connection failed")

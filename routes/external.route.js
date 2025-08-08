@@ -1,7 +1,15 @@
 const router = require("express").Router();
-const { matchCronSetup, allUserCount, changeSubscriptionStatus, deleteUser, getAllUser, getUserDetails, getMatches, getConnection, pushMatch, notificationSend } = require("../controllers/external.controller");
+const { matchCronSetup,allUserCount, changeSubscriptionStatus,
+    deleteUser, getAllUser, getUserDetails,
+    getMatches, getConnection, pushMatch,
+    notificationSend, register } = require("../controllers/external.controller");
 const middleware = require("../middleware/middleware");
 
+
+
+router
+    .route("/register-user")
+    .post(register);
 
 router
     .route("/match-cron-setup")
@@ -26,7 +34,7 @@ router
 router
     .route("/get-user-details")
     .post(getUserDetails);
-    
+
 router
     .route("/get-matches")
     .post(getMatches);

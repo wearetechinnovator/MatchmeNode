@@ -6,6 +6,7 @@ const moment = require("moment-timezone");
 const addToken = async (req, res) => {
     const userData = req.userData;
     const { fcmToken } = req.body;
+    
 
     if (!fcmToken) {
         return res.status(500).json({ err: "FCM token required" });
@@ -92,7 +93,7 @@ const get = async (req, res) => {
             ]
         });
         if (!allNotification) {
-            return res.status(500).json({ err: "No notification found" });
+            return res.status(400).json({ err: "No notification found" });
         }
 
         const formattedNotifications = allNotification.map(notification => {
@@ -126,9 +127,6 @@ const get = async (req, res) => {
                 timeAgo
             };
         });
-
-
-
 
         return res.status(200).json(formattedNotifications);
 

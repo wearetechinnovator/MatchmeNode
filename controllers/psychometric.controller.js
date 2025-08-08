@@ -50,7 +50,6 @@ const add = async (req, res) => {
             return res.status(500).json({ err: "Psychometric not insert" });
         }
 
-        console.log(insert);
         return res.status(200).json(insert);
 
 

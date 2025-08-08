@@ -4,6 +4,7 @@ const preferenceModel = require("../models/preference.model");
 const matchesFunction = require("../helper/getDateRange");
 const moment = require("moment-timezone");
 const sendNotification = require("../services/sendNotification");
+const { getToken } = require("./notification.controller");
 
 
 const add = async () => {
@@ -202,7 +203,7 @@ const add = async () => {
                 // ::::::::::::::::::::::: Send and Store Notification :::::::::::::::::;
                 const FCMtoken = await getToken(user._id);
                 await sendNotification({
-                    token: FCMtoken,
+                    tokens: FCMtoken,
                     userId: user._id,
                     title: "You have a new match!",
                     body: `You matched with ${filteredMatch.length} profiles}.`,

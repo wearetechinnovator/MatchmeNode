@@ -7,24 +7,12 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
 
-const sendNotification = async ({ token, title, body, userId, type }) => {
+const sendNotification = async ({ tokens, title, body, userId, type }) => {
     const kolkataTime = moment().tz("Asia/Kolkata").toDate();
-    // Ensure tokens is an array
-    const tokens = Array.isArray(token) ? [...token] : token;
-    console.log(tokens)
 
     try {
-
-        // const data = {
-        //     ...(userId && { user_id: userId }),
-        //     message: body,
-        //     date: kolkataTime,
-        //     notify_type: type
-        // }
-        // await notificationModel.create(data);
-
-        const response = await admin.messaging().send({
-            token: tokens,
+        const response = await admin.messaging().sendEachForMulticast({
+            tokens: tokens,
             notification: {
                 title,
                 body,
@@ -34,6 +22,17 @@ const sendNotification = async ({ token, title, body, userId, type }) => {
                 customKey: "customValue",
             },
         });
+
+        if (response) {
+            const data = {
+                ...(userId && { user_id: userId }),
+                message: body,
+                date: kolkataTime,
+                notify_type: type
+            }
+            await notificationModel.create(data);
+        }
+
         console.log("Notification sent successfully:", response);
     } catch (error) {
         console.error("Error sending notification:", error);
