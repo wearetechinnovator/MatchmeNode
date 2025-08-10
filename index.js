@@ -10,8 +10,7 @@ const app = express();
 const cors = require("cors");
 
 
-
-app.use(cors());
+app.use(cors()); //Allow all origin;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("uploads")); // Serve static files from the uploads directory
@@ -22,8 +21,8 @@ app.use("/api/v1", router);
 
 
 // FOR testing....
-app.get("/", (req, res)=>{
-    res.send("Run....")
+app.get("/", (req, res) => {
+    res.send({ test: "Run...." })
 })
 
 
