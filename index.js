@@ -6,19 +6,23 @@ const sendNotification = require("./services/sendNotification");
 const checkSubscription = require("./services/subscriptionCron");
 const { matchCron } = require("./services/matchCron");
 const PORT = 8080 || process.env.PORT
-const app = express();
 const cors = require("cors");
+const morgan = require('morgan');
+const accessLogStream = require('./services/loger');
+const app = express();
+
 
 
 app.use(cors()); //Allow all origin;
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(express.static("uploads")); // Serve static files from the uploads directory
 
+// LOG
+app.use(morgan('combined', { stream: accessLogStream }));
 
 // API routes
 app.use("/api/v1", router);
-
 
 // FOR testing....
 app.get("/", (req, res) => {
@@ -26,12 +30,16 @@ app.get("/", (req, res) => {
 })
 
 
-// Run CORN Jobs
+
+
+// Run CRON Jobs
 checkSubscription.start();
 matchCron();
 
 
-// DB connection
+
+
+// DB connection..
 connection().then(con => {
     if (con) {
         app.listen(PORT, () => {
