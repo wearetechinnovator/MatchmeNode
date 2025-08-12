@@ -78,7 +78,7 @@ const sendInterest = async (req, res) => {
 
         // Get matchuser info
         const matchUser = await usersModel.findOne({ _id: matchUserId });
-        console.log(matchUser);
+
 
         // ::::::::::::::::::::::: Send and Store Notification :::::::::::::::::;
         // Only for `send` interest notification send;
@@ -88,7 +88,7 @@ const sendInterest = async (req, res) => {
                 tokens: FCMtoken,
                 userId: matchUserId,
                 title: "You’ve received a new interest.",
-                body: `${matchUser.full_name} has shown interest in you`,
+                body: `Someone has shown interest in you`,
                 type: "interest"
             });
 
@@ -117,11 +117,11 @@ const getInterest = async (req, res) => {
         if (type === 1) {
             result = await matchModel.findOne({
                 user_id: userData._id,
-                is_subscribed: true, is_del: false,
                 matches: { $elemMatch: { interest_send: "send" } }
             }).populate("matches.match_user_id");
 
-            const filterData = result.matches.filter((q, _) => q.interest_send === "send");
+
+            const filterData = result?.matches.filter((q, _) => q.interest_send === "send" && q.status === "pending");
             result['matches'] = filterData;
         }
 
@@ -162,6 +162,7 @@ const getInterest = async (req, res) => {
         if (!result) {
             return res.status(500).json({ err: "No interest found" });
         }
+
 
         return res.status(200).json(result);
 
@@ -225,7 +226,7 @@ const sendConnection = async (req, res) => {
             tokens: FCMtoken,
             userId: connectionUserId,
             title: "You’ve made a new connection.",
-            body: `${userData.full_name} is now connected with you.`,
+            body: `Someone is now connected with you.`,
             type: "connection"
         });
 
@@ -288,6 +289,8 @@ const getConnection = async (req, res) => {
         if (!result) {
             return res.status(500).json({ msg: "No Connection Available" });
         }
+
+        console.log(result);
 
 
         return res.status(200).json(result);

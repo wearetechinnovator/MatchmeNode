@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const { matchCronSetup,allUserCount, changeSubscriptionStatus,
+const { getChat, addChat, changeReadStatus, get } = require("../controllers/adminChat.controller");
+const { matchCronSetup, allUserCount, changeSubscriptionStatus,
     deleteUser, getAllUser, getUserDetails,
     getMatches, getConnection, pushMatch,
-    notificationSend, register } = require("../controllers/external.controller");
-const middleware = require("../middleware/middleware");
+    notificationSend, register
+} = require("../controllers/external.controller");
 
 
 
@@ -48,8 +49,28 @@ router
     .post(pushMatch);
 
 router
-    .route("/send-notification")
+    .route("/notify")
     .post(notificationSend);
+
+
+router
+    .route("/get-all-tickets")
+    .post(get);
+
+router
+    .route("/get-single-chats")
+    .post(getChat);
+
+
+router
+    .route("/add-chats")
+    .post(addChat);
+
+
+router
+    .route("/change-read-status")
+    .post(changeReadStatus);
+
 
 
 module.exports = router;

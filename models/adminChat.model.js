@@ -5,6 +5,10 @@ const messageArr = new mongoose.Schema({
     message_by: {
         type: String,
         enum: ['admin', 'user']
+    },
+    readStatus: {
+        type: Boolean,
+        default: false
     }
 }, { _id: false });
 

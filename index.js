@@ -31,12 +31,9 @@ app.get("/", (req, res) => {
 
 
 
-
 // Run CRON Jobs
 checkSubscription.start();
 matchCron();
-
-
 
 
 // DB connection..
