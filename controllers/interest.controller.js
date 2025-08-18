@@ -306,5 +306,8 @@ const getConnection = async (req, res) => {
 
 
 module.exports = {
-    sendInterest, getInterest, sendConnection, getConnection
+    sendInterest, 
+    getInterest, 
+    sendConnection, 
+    getConnection
 }
