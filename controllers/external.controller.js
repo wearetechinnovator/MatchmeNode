@@ -251,7 +251,7 @@ const getAllUser = async (req, res) => {
 
         const [count, users] = await Promise.all([
             usersModel.countDocuments(filter),
-            usersModel.find(filter).skip(skip).limit(limit).sort({'createdAt':-1})
+            usersModel.find(filter).skip(skip).limit(limit).sort({ 'createdAt': -1 })
         ]);
 
         return res.status(200).json({
@@ -274,8 +274,8 @@ const getAllUser = async (req, res) => {
 const getUserDetails = async (req, res) => {
     const { userId } = req.body;
 
-    if(!userId){
-        return res.status(500).json({err: "user id is required"});
+    if (!userId) {
+        return res.status(500).json({ err: "user id is required" });
     }
 
     try {
@@ -470,17 +470,26 @@ const pushMatch = async (req, res) => {
 const notificationSend = async (req, res) => {
     const { title, body } = req.body;
 
-    // Send Notification;
-    const tokensDocs = await notifytokenModel.find({}, 'fcmTokens').lean();
-    const allTokens = tokensDocs.flatMap(doc => doc.fcmTokens);
 
-    await sendNotification({
-        token: allTokens,
-        title: title,
-        body,
-        userId: '',
-        type: "generic"
-    });
+
+    try {
+        // Send Notification;
+        const tokensDocs = await notifytokenModel.find({}, 'fcmTokens').lean();
+        const allTokens = tokensDocs.flatMap(doc => doc.fcmTokens);
+
+        await sendNotification({
+            token: allTokens,
+            title: title,
+            body,
+            userId: '',
+            type: "generic"
+        });
+
+        res.status(200).json({ message: "Successfully sent" })
+
+    } catch (error) {
+        res.status(500).json({ err: "Unable to send notification" })
+    }
 
 }
 
