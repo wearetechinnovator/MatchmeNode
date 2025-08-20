@@ -12,7 +12,7 @@ const add = async () => {
 
     try {
         const allUser = await userModel.find({
-            is_subscribed: true, is_del: false, registration_status: "1"
+            is_subscribed: true, is_del: false, registration_status: "1",psychometric_test:true
         });
 
         for (let user of allUser) {
@@ -117,6 +117,7 @@ const add = async () => {
                     $match: {
                         _id: { $ne: user._id },
                         is_subscribed: true,
+                        psychometric_test:true,
                         is_del: false,
                         registration_status: "1",
                         gender: prefGender,

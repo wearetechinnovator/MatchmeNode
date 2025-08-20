@@ -250,7 +250,7 @@ const getAllUser = async (req, res) => {
 
         const [count, users] = await Promise.all([
             usersModel.countDocuments(filter),
-            usersModel.find(filter).skip(skip).limit(limit)
+            usersModel.find(filter).skip(skip).limit(limit).sort({'createdAt':-1})
         ]);
 
         return res.status(200).json({
@@ -279,7 +279,7 @@ const getUserDetails = async (req, res) => {
 
     try {
 
-        const userDetails = await usersModel.findOne({ _id: userId, is_subscribed: true, is_del: false });
+        const userDetails = await usersModel.findOne({ _id: userId, is_del: false });
         const userPreference = await preferenceModel.findOne({ user_id: userId });
         const userPsycho = await psychometricAnswerModel.findOne({ user_id: userId });
 

@@ -72,7 +72,7 @@ const userSchema = new mongoose.Schema({
     marital_status_from_year: Number,
     marital_status_to_year: Number,
     subscription_end_date: Date,
-    is_subscribed: { type: Boolean, default: true },
+    is_subscribed: { type: Boolean, default: false },
     psychometric_test: { type: Boolean, default: false },
     psychometric_category: String,
     category: String,
