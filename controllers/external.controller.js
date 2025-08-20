@@ -273,8 +273,8 @@ const getAllUser = async (req, res) => {
 const getUserDetails = async (req, res) => {
     const { userId } = req.body;
 
-    if(!userId){
-        return res.status(500).json({err: "user id is required"});
+    if (!userId) {
+        return res.status(500).json({ err: "user id is required" });
     }
 
     try {
@@ -427,6 +427,18 @@ const pushMatch = async (req, res) => {
     if (!userId || !match_userId) {
         return res.status(500).json({ err: "User id required" });
     }
+
+    
+    // Check already matched;
+    const check = await matchesModel.findOne({
+        user_id: userId,
+        "matches.match_user_id": match_userId
+    });
+
+    if (check) {
+        return res.status(400).json({ err: "Already matched" });
+    }
+
 
     try {
 
