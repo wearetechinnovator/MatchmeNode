@@ -1,9 +1,11 @@
 const router = require("express").Router();
 const { getChat, addChat, changeReadStatus, get } = require("../controllers/adminChat.controller");
-const { matchCronSetup, allUserCount, changeSubscriptionStatus,
+const {
+    matchCronSetup, allUserCount, changeSubscriptionStatus,
     deleteUser, getAllUser, getUserDetails,
     getMatches, getConnection, pushMatch,
-    notificationSend, register
+    notificationSend, register,
+    getMatchCron
 } = require("../controllers/external.controller");
 
 
@@ -15,6 +17,11 @@ router
 router
     .route("/match-cron-setup")
     .post(matchCronSetup);
+
+router
+    .route("/match-cron-get")
+    .get(getMatchCron);
+
 
 router
     .route("/user-count")

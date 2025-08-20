@@ -2,10 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const router = require("./routes/index.route");
 const connection = require("./db/connection");
-const sendNotification = require("./services/sendNotification");
 const checkSubscription = require("./services/subscriptionCron");
 const { matchCron } = require("./services/matchCron");
-const PORT = 8080 || process.env.PORT
+const PORT = 8080 || process.env.PORT;
 const cors = require("cors");
 const morgan = require('morgan');
 const accessLogStream = require('./services/loger');
