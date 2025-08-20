@@ -119,7 +119,7 @@ const matchCronSetup = async (req, res) => {
         // Re-schedule after update
         matchCron();
 
-        return res.status(200).json({ message: "Match cron setup updated successfully.", data: updatedDoc });
+        return res.status(200).json({ message: "Match cron setup updated successfully."});
 
     } catch (error) {
         console.error("Error setting up match cron:", error);
@@ -240,44 +240,62 @@ const deleteUser = async (req, res) => {
 
 // ::::::::::: GET ALL USER ::::::::::::
 const getAllUser = async (req, res) => {
-    // Parse type, page, and limit from request body with default fallbacks
-    const type = parseInt(req.body?.type) || 1; // 1 = all, 2 = subscribed, 3 = unsubscribed
-    const page = parseInt(req.body?.page) || 1;
-    const limit = parseInt(req.body?.limit) || 10;
-    let search = req.body.searchQuery;
-
-    const skip = (page - 1) * limit;
-
     try {
-        let filter = {
-            is_del: false,
-            $or: [
-                { whatsapp_number: { $regex: search, $options: 'i' } },
-                { _id: { $regex: search, $options: 'i' } },
-                { user_name: { $regex: search, $options: 'i' } },
-                { full_name: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } },
-            ],
-        };
+        // Parse request body values safely
+        const {
+            type = 1, // 1 = all, 2 = subscribed, 3 = unsubscribed
+            page = 1,
+            limit = 10,
+            searchQuery = ""
+        } = req.body;
 
-        if (type === 2) {
+        const parsedType = parseInt(type);
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.max(1, parseInt(limit));
+        const skip = (parsedPage - 1) * parsedLimit;
+
+        // Base filter
+        let filter = { is_del: false };
+
+        // Apply subscription filter
+        if (parsedType === 2) {
             filter.is_subscribed = true;
-        } else if (type === 3) {
+        } else if (parsedType === 3) {
             filter.is_subscribed = false;
-        } else if (type !== 1) {
+        } else if (parsedType !== 1) {
             return res.status(400).json({ err: "Invalid type value." });
         }
 
+        // Apply search filter only if provided
+        if (searchQuery && searchQuery.trim() !== "") {
+            filter.$or = [
+                { whatsapp_number: { $regex: searchQuery, $options: "i" } },
+                { user_name: { $regex: searchQuery, $options: "i" } },
+                { full_name: { $regex: searchQuery, $options: "i" } },
+                { email: { $regex: searchQuery, $options: "i" } }
+            ];
+
+            // Try to match ObjectId if search is valid ObjectId
+            const mongoose = require("mongoose");
+            if (mongoose.Types.ObjectId.isValid(searchQuery)) {
+                filter.$or.push({ _id: searchQuery });
+            }
+        }
+
+        // Fetch data
         const [count, users] = await Promise.all([
             usersModel.countDocuments(filter),
-            usersModel.find(filter).skip(skip).limit(limit).sort({ 'createdAt': -1 })
+            usersModel.find(filter)
+                .skip(skip)
+                .limit(parsedLimit)
+                .sort({ createdAt: -1 })
         ]);
 
         return res.status(200).json({
-            page,
-            limit,
+            page: parsedPage,
+            limit: parsedLimit,
             totalUsers: count,
-            totalPages: Math.ceil(count / limit),
+            totalPages: Math.ceil(count / parsedLimit),
             users,
         });
 
@@ -286,6 +304,7 @@ const getAllUser = async (req, res) => {
         return res.status(500).json({ err: "Internal server error." });
     }
 };
+
 
 
 

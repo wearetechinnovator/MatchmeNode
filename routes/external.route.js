@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { getChat, addChat, changeReadStatus, get } = require("../controllers/adminChat.controller");
-const { matchCronSetup, allUserCount, changeSubscriptionStatus,
+const {
+    matchCronSetup, allUserCount, changeSubscriptionStatus,
     deleteUser, getAllUser, getUserDetails,
     getMatches, getConnection, pushMatch,
     notificationSend, register,
