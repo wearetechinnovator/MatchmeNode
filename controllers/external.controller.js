@@ -129,6 +129,25 @@ const matchCronSetup = async (req, res) => {
 };
 
 
+// :::::::::::::::: Get Match CRON ::::::::::::::::
+const getMatchCron = async (req, res) => {
+    try {
+        const getData = await matchCronModel.find({}, { week_day: 1, time: 1 });
+
+        if (!getData || getData.length === 0) {
+            return res.status(404).json({ err: "No CRON found" });
+        }
+
+        res.status(200).json(getData);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ err: "Unable to fetch CRON data" });
+    }
+}
+
+
+
 // All User Count
 const allUserCount = async (req, res) => {
     // Convert type to number or default to 1
@@ -497,6 +516,9 @@ const notificationSend = async (req, res) => {
 
 
 
+
+
+
 module.exports = {
     matchCronSetup,
     notificationSend,
@@ -509,4 +531,5 @@ module.exports = {
     getConnection,
     pushMatch,
     register,
+    getMatchCron
 }
