@@ -470,18 +470,18 @@ const pushMatch = async (req, res) => {
 const notificationSend = async (req, res) => {
     const { title, body } = req.body;
 
-
-
     try {
         // Send Notification;
         const tokensDocs = await notifytokenModel.find({}, 'fcmTokens').lean();
         const allTokens = tokensDocs.flatMap(doc => doc.fcmTokens);
 
+        console.log(allTokens)
+
         await sendNotification({
-            token: allTokens,
-            title: title,
-            body,
+            tokens: allTokens,
             userId: '',
+            title: title,
+            body: body,
             type: "generic"
         });
 
