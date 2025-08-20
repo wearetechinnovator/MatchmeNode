@@ -10,7 +10,7 @@ const psychometricAnswerModel = require("../models/psychometricAnswer.model");
 const matchesModel = require("../models/matches.model");
 const connectionModel = require("../models/connection.model");
 const passwordGenerator = require("../helper/passGen");
-
+const mongoose = require("mongoose");
 
 // ::::::::::: USER REGISTER ::::::::::::
 const register = async (req, res) => {
@@ -276,7 +276,6 @@ const getAllUser = async (req, res) => {
             ];
 
             // Try to match ObjectId if search is valid ObjectId
-            const mongoose = require("mongoose");
             if (mongoose.Types.ObjectId.isValid(searchQuery)) {
                 filter.$or.push({ _id: searchQuery });
             }
