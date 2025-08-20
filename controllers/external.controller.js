@@ -234,6 +234,7 @@ const getAllUser = async (req, res) => {
             is_del: false,
             $or: [
                 { whatsapp_number: { $regex: search, $options: 'i' } },
+                { _id: { $regex: search, $options: 'i' } },
                 { user_name: { $regex: search, $options: 'i' } },
                 { full_name: { $regex: search, $options: 'i' } },
                 { email: { $regex: search, $options: 'i' } },
