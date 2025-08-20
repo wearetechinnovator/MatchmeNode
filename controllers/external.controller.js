@@ -342,6 +342,18 @@ const getMatches = async (req, res) => {
         return res.status(400).json({ err: "User id required" });
     }
 
+    // Send all matches
+    if(!fromDate && !toDate){
+        const all = await matchesModel.findOne({user_id:userId});
+
+        if(!all){
+            return res.status(404).json({ err: "No data found" });
+        }
+
+        return res.status(200).json(all);
+    }
+
+
     const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').toDate();
     const toDateKolkata = moment(toDate).tz('Asia/Kolkata').endOf('day').toDate();
 
