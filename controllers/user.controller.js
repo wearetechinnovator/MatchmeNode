@@ -94,7 +94,7 @@ const login = async (req, res) => {
 // ::::::::::: UPDATE USER PROFILE :::::::::::
 const update = async (req, res) => {
     const {
-        whatsapp_number, email, full_name, nick_name, token,
+        whatsapp_number, member_type, email, full_name, nick_name, token,
         gender, dob, birth_time, birth_place, pin_code, country, locality, address,
         nationality, nationality_details, religion, community, medical_history, height,
         weight, marital_status, should_weight_display_on_profile, do_have_kids, father_name,
@@ -123,7 +123,7 @@ const update = async (req, res) => {
 
         const update = await userModel.updateOne({ _id: userData._id, is_subscribed:true, is_del: false }, {
             $set: {
-                whatsapp_number, email, full_name, nick_name,
+                whatsapp_number,member_type, email, full_name, nick_name,
                 gender, dob, birth_time, birth_place, pin_code, country, locality, address,
                 nationality, nationality_details, religion, community, medical_history, height,
                 weight, marital_status, should_weight_display_on_profile, do_have_kids, father_name,

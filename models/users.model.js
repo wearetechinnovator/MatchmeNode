@@ -73,6 +73,8 @@ const userSchema = new mongoose.Schema({
     marital_status_to_year: Number,
     subscription_end_date: Date,
     is_subscribed: { type: Boolean, default: false },
+    profile_status: { type: Boolean, default: true }, //true = open | false = pause 
+    profile_type: { type: Boolean, default: true }, //true = open | false = confidential 
     psychometric_test: { type: Boolean, default: false },
     psychometric_category: String,
     category: String,
@@ -81,6 +83,10 @@ const userSchema = new mongoose.Schema({
     registration_status: {
         type: String,
         default: 0 // 0 = incomplete 1=complete
+    },
+    member_type: {
+        type: Boolean,
+        default: 0 // ``0 = Non member, 1 = Member``;
     },
     registration_step: {
         type: String,
