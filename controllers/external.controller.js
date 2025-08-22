@@ -10,7 +10,7 @@ const psychometricAnswerModel = require("../models/psychometricAnswer.model");
 const matchesModel = require("../models/matches.model");
 const connectionModel = require("../models/connection.model");
 const passwordGenerator = require("../helper/passGen");
-
+const mongoose = require("mongoose");
 
 // ::::::::::: USER REGISTER ::::::::::::
 const register = async (req, res) => {
@@ -277,7 +277,6 @@ const getAllUser = async (req, res) => {
             ];
 
             // Try to match ObjectId if search is valid ObjectId
-            const mongoose = require("mongoose");
             if (mongoose.Types.ObjectId.isValid(searchQuery)) {
                 filter.$or.push({ _id: searchQuery });
             }
@@ -343,6 +342,18 @@ const getMatches = async (req, res) => {
     if (!userId) {
         return res.status(400).json({ err: "User id required" });
     }
+
+    // Send all matches
+    if(!fromDate && !toDate){
+        const all = await matchesModel.findOne({user_id:userId}).populate("matches.match_user_id");
+
+        if(!all){
+            return res.status(404).json({ err: "No data found" });
+        }
+
+        return res.status(200).json(all);
+    }
+
 
     const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').toDate();
     const toDateKolkata = moment(toDate).tz('Asia/Kolkata').endOf('day').toDate();
@@ -467,6 +478,18 @@ const pushMatch = async (req, res) => {
     if (!userId || !match_userId) {
         return res.status(500).json({ err: "User id required" });
     }
+
+    
+    // Check already matched;
+    const check = await matchesModel.findOne({
+        user_id: userId,
+        "matches.match_user_id": match_userId
+    });
+
+    if (check) {
+        return res.status(400).json({ err: "Already matched" });
+    }
+
 
     try {
 
