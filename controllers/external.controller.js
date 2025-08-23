@@ -99,14 +99,15 @@ const register = async (req, res) => {
 const matchCronSetup = async (req, res) => {
     const kolkataNow = moment().tz('Asia/Kolkata').toDate();
     try {
-        const { week_day, time } = req.body;
+        const { week_day, time, number_of_match } = req.body;
 
-        if ([week_day, time].some((field) => !field || field == "")) {
+        if ([week_day, time, number_of_match].some((field) => !field || field == "")) {
             return res.status(400).json({ err: "Require all fields" });
         }
 
         const updateData = {
             time,
+            number_of_match,
             week_day
         };
 
@@ -517,7 +518,7 @@ const pushMatch = async (req, res) => {
             type: "match"
         });
 
-        return res.status(200).json({ message: "Match push successfully" });
+        return res.status(200).json({ message: "Match sent successfully" });
 
 
     } catch (error) {

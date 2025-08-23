@@ -5,6 +5,7 @@ const matchesFunction = require("../helper/getDateRange");
 const moment = require("moment-timezone");
 const sendNotification = require("../services/sendNotification");
 const { getToken } = require("./notification.controller");
+const matchCronModel = require("../models/matchCron.model");
 
 
 const add = async () => {
@@ -13,7 +14,9 @@ const add = async () => {
     try {
         const allUser = await userModel.find({
             is_subscribed: true, is_del: false, registration_status: "1",psychometric_test:true
+            ,member_type:1, profile_status:true
         });
+        const numberOfMatch = await matchCronModel.findOne(); //Get Match CORN
 
         for (let user of allUser) {
 
@@ -23,7 +26,7 @@ const add = async () => {
             // Age
             const { fromDob, toDob } = matchesFunction.getDobRangeFromAge(getPref.age_preference.from, getPref.age_preference.to);
 
-            //Genger 
+            //Gender 
             const prefGender = user.gender == "Male" ? "Female" : (user.gender == "Female" ? "Male" : "Other");
 
             //Height
@@ -118,6 +121,8 @@ const add = async () => {
                         _id: { $ne: user._id },
                         is_subscribed: true,
                         psychometric_test:true,
+                        profile_status:true,
+                        profile_type:true,
                         is_del: false,
                         registration_status: "1",
                         gender: prefGender,
@@ -144,7 +149,7 @@ const add = async () => {
                     }
                 },
                 {
-                    $limit: 3 // only first 3 results
+                    $limit: numberOfMatch.number_of_match // This data will come from match cron api=
                 },
                 {
                     $project: {

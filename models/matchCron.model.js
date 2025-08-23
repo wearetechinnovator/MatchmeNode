@@ -7,6 +7,7 @@ const matchCronSchema = new mongoose.Schema({
         default: 'weekday'
     },
     date: Date,
+    number_of_match: Number,
     week_day: {
         type: String,
         enum: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
