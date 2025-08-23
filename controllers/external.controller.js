@@ -344,13 +344,13 @@ const getMatches = async (req, res) => {
 
     // Send all matches
     if(!fromDate && !toDate){
-        const all = await matchesModel.findOne({user_id:userId}).populate("matches.match_user_id");
+        const query = await matchesModel.findOne({user_id:userId}).populate("matches.match_user_id");
 
-        if(!all){
+        if(!query){
             return res.status(404).json({ err: "No data found" });
         }
 
-        return res.status(200).json(all);
+        return res.status(200).json(query);
     }
 
 
