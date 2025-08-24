@@ -626,6 +626,35 @@ const changeStatus = async (req, res) => {
 
 }
 
+// :::::::::::::::::::::::::: CHANGE PROFILE TYPE (confidential OR OPEN)  :::::::::::::::::::::::
+const changeProfileType = async (req, res) => {
+    const { userId, type } = req.body;
+
+    if (!userId || !type) {
+        return res.status(400).json({ err: 'Userid and type is required' });
+    }
+
+    try {
+        const statusQuery = await usersModel.updateOne({ _id: userId }, {
+            $set: {
+                profile_type: type
+            }
+        });
+
+        if (statusQuery.modifiedCount < 1) {
+            return res.status(500).json({ err: "Profile type not change" })
+        }
+
+        return res.status(200).json({ meesage: "Profile type change successfully" });
+
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ err: "Something went wrong" });
+    }
+
+}
+
 
 // ::::::::::::::::::::::::::::::: UPLOAD AGREEMENT :::::::::::::::::::::::::::
 const uploadAgreement = async (req, res) => {
@@ -682,5 +711,6 @@ module.exports = {
     getMatchCron,
     userFeedBack,
     changeStatus,
-    uploadAgreement
+    uploadAgreement,
+    changeProfileType
 }

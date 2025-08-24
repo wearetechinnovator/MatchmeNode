@@ -8,7 +8,8 @@ const {
     getMatchCron,
     userFeedBack,
     changeStatus,
-    uploadAgreement
+    uploadAgreement,
+    changeProfileType
 } = require("../controllers/external.controller");
 
 
@@ -86,6 +87,11 @@ router
 router
     .route("/change-status")
     .post(changeStatus);
+
+router
+    .route("/change-type")
+    .post(changeProfileType);
+
 
 router
     .route("/upload-agreement")
