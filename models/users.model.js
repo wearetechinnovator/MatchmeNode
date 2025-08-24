@@ -76,6 +76,7 @@ const userSchema = new mongoose.Schema({
     profile_status: { type: Boolean, default: true }, //true = open | false = pause 
     profile_type: { type: Boolean, default: true }, //true = open | false = confidential 
     psychometric_test: { type: Boolean, default: false },
+    admin_feedback: String,
     psychometric_category: String,
     category: String,
     interests: { type: Array },
@@ -86,7 +87,7 @@ const userSchema = new mongoose.Schema({
     },
     member_type: {
         type: Boolean,
-        default: 0 // ``0 = Non member, 1 = Member``;
+        default: false // ``false = Non member, true = Member``;
     },
     registration_step: {
         type: String,

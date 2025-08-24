@@ -5,7 +5,10 @@ const {
     deleteUser, getAllUser, getUserDetails,
     getMatches, getConnection, pushMatch,
     notificationSend, register,
-    getMatchCron
+    getMatchCron,
+    userFeedBack,
+    changeStatus,
+    uploadAgreement
 } = require("../controllers/external.controller");
 
 
@@ -68,16 +71,25 @@ router
     .route("/get-single-chats")
     .post(getChat);
 
-
 router
     .route("/add-chats")
     .post(addChat);
-
 
 router
     .route("/change-read-status")
     .post(changeReadStatus);
 
+router
+    .route("/add-feedbacks")
+    .post(userFeedBack);
+
+router
+    .route("/change-status")
+    .post(changeStatus);
+
+router
+    .route("/upload-agreement")
+    .post(uploadAgreement);    
 
 
 module.exports = router;

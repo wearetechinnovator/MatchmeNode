@@ -11,6 +11,9 @@ const matchesModel = require("../models/matches.model");
 const connectionModel = require("../models/connection.model");
 const passwordGenerator = require("../helper/passGen");
 const mongoose = require("mongoose");
+const fs = require("fs");
+const path = require("path");
+
 
 // ::::::::::: USER REGISTER ::::::::::::
 const register = async (req, res) => {
@@ -120,7 +123,7 @@ const matchCronSetup = async (req, res) => {
         // Re-schedule after update
         matchCron();
 
-        return res.status(200).json({ message: "Match cron setup updated successfully."});
+        return res.status(200).json({ message: "Match cron setup updated successfully." });
 
     } catch (error) {
         console.error("Error setting up match cron:", error);
@@ -344,10 +347,10 @@ const getMatches = async (req, res) => {
     }
 
     // Send all matches
-    if(!fromDate && !toDate){
-        const query = await matchesModel.findOne({user_id:userId}).populate("matches.match_user_id");
+    if (!fromDate && !toDate) {
+        const query = await matchesModel.findOne({ user_id: userId }).populate("matches.match_user_id");
 
-        if(!query){
+        if (!query) {
             return res.status(404).json({ err: "No data found" });
         }
 
@@ -469,7 +472,7 @@ const getConnection = async (req, res) => {
 };
 
 
-// :::::::::::: PUSH MATCH FOR A USER ::::::::::::
+// :::::::::::::::::::::: PUSH MATCH FOR A USER ::::::::::::::::::::::
 const pushMatch = async (req, res) => {
     let { userId, match_userId } = req.body;
     const kolkataTime = moment().tz("Asia/Kolkata").toDate();
@@ -479,7 +482,7 @@ const pushMatch = async (req, res) => {
         return res.status(500).json({ err: "User id required" });
     }
 
-    
+
     // Check already matched;
     const check = await matchesModel.findOne({
         user_id: userId,
@@ -530,14 +533,21 @@ const pushMatch = async (req, res) => {
 
 // :::::::::::::::: SEND NOTIFICATION FOR ALL USERS ::::::::::::::::
 const notificationSend = async (req, res) => {
-    const { title, body } = req.body;
+    const { title, body, userId } = req.body;
 
     try {
         // Send Notification;
-        const tokensDocs = await notifytokenModel.find({}, 'fcmTokens').lean();
-        const allTokens = tokensDocs.flatMap(doc => doc.fcmTokens);
+        let allTokens;
 
-        console.log(allTokens)
+        if (userId) {
+            const getToken = await notifytokenModel.findOne({ user_id: userId });
+            allTokens = getToken.fcmTokens;
+
+        } else {
+            const tokensDocs = await notifytokenModel.find({}, 'fcmTokens').lean();
+            allTokens = tokensDocs.flatMap(doc => doc.fcmTokens);
+        }
+
 
         await sendNotification({
             tokens: allTokens,
@@ -556,7 +566,102 @@ const notificationSend = async (req, res) => {
 }
 
 
+// :::::::::::::::::::::::::: FEEDBACK USER :::::::::::::::::::::::
+const userFeedBack = async (req, res) => {
+    const { userId, feedback } = req.body;
 
+    if (!userId || !feedback) {
+        return res.status(400).json({ err: 'Userid and feedback is required' });
+    }
+
+    try {
+        const addFeedBack = await usersModel.updateOne({ _id: userId }, {
+            $set: {
+                admin_feedback: feedback
+            }
+        });
+
+        if (addFeedBack.modifiedCount < 1) {
+            return res.status(500).json({ err: "feedback add failed" })
+        }
+
+        return res.status(200).json({ meesage: "feedback add successfully" });
+
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ err: "Something went wrong" });
+    }
+
+}
+
+
+
+// :::::::::::::::::::::::::: CHANGE PROFILE STATUS (PAUSE OR OPEN)  :::::::::::::::::::::::
+const changeStatus = async (req, res) => {
+    const { userId, status } = req.body;
+
+    if (!userId || !status) {
+        return res.status(400).json({ err: 'Userid and status is required' });
+    }
+
+    try {
+        const statusQuery = await usersModel.updateOne({ _id: userId }, {
+            $set: {
+                profile_status: status
+            }
+        });
+
+        if (statusQuery.modifiedCount < 1) {
+            return res.status(500).json({ err: "Profile status not change" })
+        }
+
+        return res.status(200).json({ meesage: status === "true" ? "Profile open successfully" : "Profile pause successfully" });
+
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ err: "Something went wrong" });
+    }
+
+}
+
+
+// ::::::::::::::::::::::::::::::: UPLOAD AGREEMENT :::::::::::::::::::::::::::
+const uploadAgreement = async (req, res) => {
+    const { file } = req.body; //base64
+
+    if (!file) {
+      return res.status(400).json({ err: "file is required" });
+    }
+
+
+  try {
+    const buffer = Buffer.from(file, "base64");
+    const pdfMagic = buffer.subarray(0, 4).toString();
+
+    if (pdfMagic !== "%PDF") {
+      return res.status(400).json({ err: "Only valid PDF files are allowed" });
+    }
+
+    const filepath = path.join(__dirname, "agreement", "agreement.pdf");
+
+    fs.mkdirSync(path.dirname(filepath), { recursive: true });
+
+    fs.writeFileSync(filepath, buffer);
+
+
+    if (fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
+      return res.status(200).json({ message: "File uploaded successfully" });
+    } else {
+      return res.status(500).json({ err: "File upload failed" });
+    }
+
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ err: "Something went wrong" });
+  }
+};
 
 
 
@@ -574,5 +679,8 @@ module.exports = {
     getConnection,
     pushMatch,
     register,
-    getMatchCron
+    getMatchCron,
+    userFeedBack,
+    changeStatus,
+    uploadAgreement
 }
