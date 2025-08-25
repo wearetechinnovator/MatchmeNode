@@ -585,7 +585,7 @@ const userFeedBack = async (req, res) => {
             return res.status(500).json({ err: "feedback add failed" })
         }
 
-        return res.status(200).json({ meesage: "feedback add successfully" });
+        return res.status(200).json({ message: "feedback add successfully" });
 
 
     } catch (error) {
@@ -616,7 +616,7 @@ const changeStatus = async (req, res) => {
             return res.status(500).json({ err: "Profile status not change" })
         }
 
-        return res.status(200).json({ meesage: status === "true" ? "Profile open successfully" : "Profile pause successfully" });
+        return res.status(200).json({ message: status === "true" ? "Profile open successfully" : "Profile pause successfully" });
 
 
     } catch (error) {
@@ -645,7 +645,7 @@ const changeProfileType = async (req, res) => {
             return res.status(500).json({ err: "Profile type not change" })
         }
 
-        return res.status(200).json({ meesage: "Profile type change successfully" });
+        return res.status(200).json({ message: "Profile type change successfully" });
 
 
     } catch (error) {
