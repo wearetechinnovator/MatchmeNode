@@ -8,7 +8,7 @@ admin.initializeApp({
 });
 
 const sendNotification = async ({ tokens, title, body, userId, type }) => {
-    const kolkataTime = moment().tz("Asia/Kolkata").toDate();
+    const kolkataTime = new Date();
 
     try {
         const response = await admin.messaging().sendEachForMulticast({

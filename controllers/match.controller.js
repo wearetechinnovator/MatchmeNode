@@ -9,7 +9,7 @@ const matchCronModel = require("../models/matchCron.model");
 
 
 const add = async () => {
-    const kolkataTime = moment().tz("Asia/Kolkata").toDate();
+    const kolkataTime = new Date();
 
     try {
         const allUser = await userModel.find({

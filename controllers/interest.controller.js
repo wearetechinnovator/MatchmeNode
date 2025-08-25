@@ -12,7 +12,7 @@ const usersModel = require("../models/users.model");
 const sendInterest = async (req, res) => {
     const { matchUserId, type } = req.body;
     const userData = req.userData;
-    const kolkataTime = moment().tz("Asia/Kolkata").toDate();
+    const kolkataTime = new Date();
     const intesetOption = {
         0: "pending",
         1: "send",
@@ -179,7 +179,7 @@ const getInterest = async (req, res) => {
 const sendConnection = async (req, res) => {
     const { connectionUserId, type } = req.body;
     const userData = req.userData;
-    const kolkataTime = moment().tz("Asia/Kolkata").toDate();
+    const kolkataTime = new Date();
     const intesetOption = {
         0: "rejected",
         1: "accepted",
@@ -289,8 +289,6 @@ const getConnection = async (req, res) => {
         if (!result) {
             return res.status(500).json({ msg: "No Connection Available" });
         }
-
-        console.log(result);
 
 
         return res.status(200).json(result);

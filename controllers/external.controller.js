@@ -100,7 +100,6 @@ const register = async (req, res) => {
 
 // :::::::::: Match CRON Setup ::::::::::
 const matchCronSetup = async (req, res) => {
-    const kolkataNow = moment().tz('Asia/Kolkata').toDate();
     try {
         const { week_day, time, number_of_match } = req.body;
 
@@ -182,6 +181,9 @@ const allUserCount = async (req, res) => {
 // ::::::::::: CHANGE SUBSCRIPTION STATUS ::::::::::::
 const changeSubscriptionStatus = async (req, res) => {
     const { userId, endDate, status } = req.body;
+    const endDateUTC = moment.tz(endDate, "YYYY-MM-DD", "Asia/Kolkata").utc().toDate();
+
+    console.log(endDateUTC);
 
     if (!userId || !status) {
         return res.status(500).json({ err: "Userid and Status can't be blank" });
@@ -195,7 +197,7 @@ const changeSubscriptionStatus = async (req, res) => {
         const update = await usersModel.updateOne({ _id: userId, is_del: false }, {
             $set: {
                 is_subscribed: status == 1 ? true : false,
-                subscription_end_date: endDate
+                subscription_end_date: endDateUTC
             }
         });
 
@@ -358,8 +360,10 @@ const getMatches = async (req, res) => {
     }
 
 
-    const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').toDate();
-    const toDateKolkata = moment(toDate).tz('Asia/Kolkata').endOf('day').toDate();
+    const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').utc().toDate();
+
+    const toDateKolkata = moment(toDate).tz('Asia/Kolkata').endOf('day').utc().toDate();
+
 
     try {
         // Fetch the user's matches document
@@ -409,8 +413,8 @@ const getConnection = async (req, res) => {
         return res.status(400).json({ err: "User id required" });
     }
 
-    const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').toDate();
-    const toDateKolkata = moment(toDate).tz('Asia/Kolkata').endOf('day').toDate();
+    const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').utc().toDate();
+    const toDateKolkata = moment(toDate).tz('Asia/Kolkata').endOf('day').utc().toDate();
 
     try {
         const result = await connectionModel.aggregate([
@@ -419,8 +423,8 @@ const getConnection = async (req, res) => {
                     $and: [
                         {
                             $or: [
-                                { user_1: mongoose.Types.ObjectId(userId) },
-                                { user_2: mongoose.Types.ObjectId(userId) },
+                                { user_1: new mongoose.Types.ObjectId(userId) },
+                                { user_2: new mongoose.Types.ObjectId(userId) },
                             ]
                         },
                         {
@@ -436,7 +440,7 @@ const getConnection = async (req, res) => {
                 $project: {
                     other_user_id: {
                         $cond: {
-                            if: { $eq: ["$user_1", mongoose.Types.ObjectId(userId)] },
+                            if: { $eq: ["$user_1", new mongoose.Types.ObjectId(userId)] },
                             then: "$user_2",
                             else: "$user_1"
                         }
@@ -475,7 +479,7 @@ const getConnection = async (req, res) => {
 // :::::::::::::::::::::: PUSH MATCH FOR A USER ::::::::::::::::::::::
 const pushMatch = async (req, res) => {
     let { userId, match_userId } = req.body;
-    const kolkataTime = moment().tz("Asia/Kolkata").toDate();
+    const kolkataTime = new Date();
 
 
     if (!userId || !match_userId) {

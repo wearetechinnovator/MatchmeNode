@@ -53,7 +53,7 @@ const getToken = async (userId) => {
 const add = async (req, res) => {
     const userData = req.userData;
     const { msg, type } = req.body;
-    const kolkataTime = moment().tz("Asia/Kolkata").toDate();
+    const kolkataTime = new Date();
 
     if (!msg) {
         return res.status(500).json({ err: "FCM token required" });
