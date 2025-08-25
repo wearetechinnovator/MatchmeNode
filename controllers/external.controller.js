@@ -551,7 +551,7 @@ const notificationSend = async (req, res) => {
 
         await sendNotification({
             tokens: allTokens,
-            userId: '',
+            userId: userId,
             title: title,
             body: body,
             type: "generic"
