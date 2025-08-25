@@ -361,7 +361,6 @@ const getMatches = async (req, res) => {
 
 
     const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').utc().toDate();
-
     const toDateKolkata = moment(toDate).tz('Asia/Kolkata').endOf('day').utc().toDate();
 
 
@@ -385,12 +384,7 @@ const getMatches = async (req, res) => {
 
         // Filter matches with pending interest_send
         const filteredMatches = query.matches.filter(
-            m =>
-                m.interest_send === "pending" &&
-                (
-                    (m.match_date && m.match_date >= fromDateKolkata && m.match_date <= toDateKolkata) ||
-                    !m.match_date
-                )
+            m => m.interest_send === "pending" 
         );
 
         query.matches = filteredMatches.reverse();
