@@ -407,78 +407,27 @@ const getConnection = async (req, res) => {
         return res.status(400).json({ err: "User id required" });
     }
 
-    // Send all matches
-    if (!fromDate && !toDate) {
-        const result = await connectionModel.aggregate([
-            {
-                $match: {
-                    $and: [
-                        {
-                            $or: [
-                                { user_1: new mongoose.Types.ObjectId(userId) },
-                                { user_2: new mongoose.Types.ObjectId(userId) },
-                            ]
-                        },
-                    ]
-                }
-            },
-            {
-                $project: {
-                    other_user_id: {
-                        $cond: {
-                            if: { $eq: ["$user_1", new mongoose.Types.ObjectId(userId)] },
-                            then: "$user_2",
-                            else: "$user_1"
-                        }
-                    }
-                }
-            },
-            {
-                $lookup: {
-                    from: "users", // replace with your actual MongoDB collection name if different
-                    localField: "other_user_id",
-                    foreignField: "_id",
-                    as: "other_user"
-                }
-            },
-            {
-                $unwind: "$other_user"
-            },
-            {
-                $replaceRoot: { newRoot: "$other_user" }
-            }
-        ]);
-
-        if (!result) {
-            return res.status(404).json({ err: "No data found" });
-        }
-
-        return res.status(200).json(result);
-    }
-
-    const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').utc().toDate();
-    const toDateKolkata = moment(toDate).tz('Asia/Kolkata').endOf('day').utc().toDate();
+    const fromDateKolkata = fromDate
+        ? moment(fromDate).tz("Asia/Kolkata").startOf("day").utc().toDate()
+        : null;
+    const toDateKolkata = toDate
+        ? moment(toDate).tz("Asia/Kolkata").endOf("day").utc().toDate()
+        : null;
 
     try {
+        const matchStage = {
+            $or: [
+                { user_1: new mongoose.Types.ObjectId(userId) },
+                { user_2: new mongoose.Types.ObjectId(userId) },
+            ]
+        };
+
+        if (fromDateKolkata && toDateKolkata) {
+            matchStage.date = { $gte: fromDateKolkata, $lte: toDateKolkata };
+        }
+
         const result = await connectionModel.aggregate([
-            {
-                $match: {
-                    $and: [
-                        {
-                            $or: [
-                                { user_1: new mongoose.Types.ObjectId(userId) },
-                                { user_2: new mongoose.Types.ObjectId(userId) },
-                            ]
-                        },
-                        {
-                            date: {
-                                $gte: fromDateKolkata,
-                                $lte: toDateKolkata
-                            }
-                        }
-                    ]
-                }
-            },
+            { $match: matchStage },
             {
                 $project: {
                     other_user_id: {
@@ -487,22 +436,28 @@ const getConnection = async (req, res) => {
                             then: "$user_2",
                             else: "$user_1"
                         }
-                    }
+                    },
+                    date: 1,          // ✅ keep date
+                    createdAt: 1,     // optional
+                    updatedAt: 1      // optional
                 }
             },
             {
                 $lookup: {
-                    from: "users", // replace with your actual MongoDB collection name if different
+                    from: "users",
                     localField: "other_user_id",
                     foreignField: "_id",
                     as: "other_user"
                 }
             },
+            { $unwind: "$other_user" },
             {
-                $unwind: "$other_user"
-            },
-            {
-                $replaceRoot: { newRoot: "$other_user" }
+                $project: {
+                    date: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    other_user: 1
+                }
             }
         ]);
 
