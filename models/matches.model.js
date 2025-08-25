@@ -17,7 +17,11 @@ const matchArray = new mongoose.Schema({
         enum: ["pending", "accepted", "rejected", "removed"],
         default:"pending"
     },
-    status_change_date: Date
+    status_change_date: Date,
+    generate_by:{
+        type: String,
+        enum: ["admin", "system"]
+    }
 }, { _id: false });
 
 

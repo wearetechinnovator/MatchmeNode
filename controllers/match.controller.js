@@ -190,7 +190,8 @@ const add = async () => {
                     match_user_id: item._id,
                     match_date: kolkataTime,
                     interest_send: "pending",
-                    status: "pending"
+                    status: "pending",
+                    generate_by: 'system'
                 }));
 
             // 3. Add only new matches (no update if none)

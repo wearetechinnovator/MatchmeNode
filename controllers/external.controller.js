@@ -504,7 +504,8 @@ const pushMatch = async (req, res) => {
                         match_user_id: match_userId,
                         match_date: kolkataTime,
                         interest_send: "pending",
-                        status: "pending"
+                        status: "pending",
+                        generate_by: 'admin'
                     }
                 }
             },
