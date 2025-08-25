@@ -136,7 +136,7 @@ const matchCronSetup = async (req, res) => {
 // :::::::::::::::: Get Match CRON ::::::::::::::::
 const getMatchCron = async (req, res) => {
     try {
-        const getData = await matchCronModel.find({}, { week_day: 1, time: 1 });
+        const getData = await matchCronModel.find({}, { week_day: 1, time: 1, number_of_match: 1 });
 
         if (!getData || getData.length === 0) {
             return res.status(404).json({ err: "No CRON found" });
@@ -661,35 +661,35 @@ const uploadAgreement = async (req, res) => {
     const { file } = req.body; //base64
 
     if (!file) {
-      return res.status(400).json({ err: "file is required" });
+        return res.status(400).json({ err: "file is required" });
     }
 
 
-  try {
-    const buffer = Buffer.from(file, "base64");
-    const pdfMagic = buffer.subarray(0, 4).toString();
+    try {
+        const buffer = Buffer.from(file, "base64");
+        const pdfMagic = buffer.subarray(0, 4).toString();
 
-    if (pdfMagic !== "%PDF") {
-      return res.status(400).json({ err: "Only valid PDF files are allowed" });
+        if (pdfMagic !== "%PDF") {
+            return res.status(400).json({ err: "Only valid PDF files are allowed" });
+        }
+
+        const filepath = path.join(__dirname, "agreement", "agreement.pdf");
+
+        fs.mkdirSync(path.dirname(filepath), { recursive: true });
+
+        fs.writeFileSync(filepath, buffer);
+
+
+        if (fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
+            return res.status(200).json({ message: "File uploaded successfully" });
+        } else {
+            return res.status(500).json({ err: "File upload failed" });
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ err: "Something went wrong" });
     }
-
-    const filepath = path.join(__dirname, "agreement", "agreement.pdf");
-
-    fs.mkdirSync(path.dirname(filepath), { recursive: true });
-
-    fs.writeFileSync(filepath, buffer);
-
-
-    if (fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
-      return res.status(200).json({ message: "File uploaded successfully" });
-    } else {
-      return res.status(500).json({ err: "File upload failed" });
-    }
-
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ err: "Something went wrong" });
-  }
 };
 
 
