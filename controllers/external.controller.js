@@ -384,7 +384,7 @@ const getMatches = async (req, res) => {
 
         // Filter matches with pending interest_send
         const filteredMatches = query.matches.filter(
-            m => m.interest_send === "pending" 
+            m => m.interest_send === "pending"
         );
 
         query.matches = filteredMatches.reverse();
@@ -405,6 +405,55 @@ const getConnection = async (req, res) => {
 
     if (!userId) {
         return res.status(400).json({ err: "User id required" });
+    }
+
+    // Send all matches
+    if (!fromDate && !toDate) {
+        const result = await connectionModel.aggregate([
+            {
+                $match: {
+                    $and: [
+                        {
+                            $or: [
+                                { user_1: new mongoose.Types.ObjectId(userId) },
+                                { user_2: new mongoose.Types.ObjectId(userId) },
+                            ]
+                        },
+                    ]
+                }
+            },
+            {
+                $project: {
+                    other_user_id: {
+                        $cond: {
+                            if: { $eq: ["$user_1", new mongoose.Types.ObjectId(userId)] },
+                            then: "$user_2",
+                            else: "$user_1"
+                        }
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: "users", // replace with your actual MongoDB collection name if different
+                    localField: "other_user_id",
+                    foreignField: "_id",
+                    as: "other_user"
+                }
+            },
+            {
+                $unwind: "$other_user"
+            },
+            {
+                $replaceRoot: { newRoot: "$other_user" }
+            }
+        ]);
+
+        if (!result) {
+            return res.status(404).json({ err: "No data found" });
+        }
+
+        return res.status(200).json(result);
     }
 
     const fromDateKolkata = moment(fromDate).tz('Asia/Kolkata').startOf('day').utc().toDate();
