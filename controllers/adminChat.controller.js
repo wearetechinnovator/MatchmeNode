@@ -179,7 +179,7 @@ const changeReadStatus = async (req, res) => {
 
     try {
         const result = await adminChatModel.updateOne(
-            { _id: userId, "message.message_by": type },
+            { user_id: userId, "message.message_by": type },
             { $set: { "message.$[elem].readStatus": true } },
             { arrayFilters: [{ "elem.message_by": type }] }
         );
