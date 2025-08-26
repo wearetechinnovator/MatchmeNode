@@ -63,6 +63,11 @@ router
     .route("/notify")
     .post(notificationSend);
 
+
+router
+    .route("/get-single-chats")
+    .post(getChat);
+
 router
     .route("/add-chats")
     .post(addChat);
