@@ -1,4 +1,5 @@
 const adminChatModel = require("../models/adminChat.model");
+const usersModel = require("../models/users.model");
 
 
 // ::::::::::::::: ADD MESSAGE TICKETS ::::::::::::::::: 
@@ -85,11 +86,60 @@ const get = async (req, res) => {
 // :::::::::::::::::::::::::::: GET CHAT LISTS ::::::::::::::::::::::::::::
 const getList = async (req, res) => {
     try {
-        const chats = await adminChatModel
-            .find()
-            .populate("user_id")
-            .sort({ _id: -1 });
+        const {
+            page = 1,
+            limit = 10,
+            searchQuery = ""
+        } = req.body;
 
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.max(1, parseInt(limit));
+        const skip = (parsedPage - 1) * parsedLimit;
+
+        // -------------------
+        // 1. Build user filter only for search
+        // -------------------
+        let userFilter = { is_del: false };
+
+        if (searchQuery && searchQuery.trim() !== "") {
+            userFilter.$or = [
+                { whatsapp_number: { $regex: searchQuery, $options: "i" } },
+                { user_name: { $regex: searchQuery, $options: "i" } },
+                { full_name: { $regex: searchQuery, $options: "i" } },
+                { email: { $regex: searchQuery, $options: "i" } }
+            ];
+        }
+
+        // -------------------
+        // 2. Find users matching search
+        // -------------------
+        const filteredUsers = await usersModel.find(userFilter).select("_id");
+        const userIds = filteredUsers.map(u => u._id);
+        
+        // 3. Chat filter based on userIds
+        let chatFilter = {};
+        if (userIds.length > 0) {
+            chatFilter.user_id = { $in: userIds };
+        } else if (searchQuery && searchQuery.trim() !== "") {
+            // No users match search → return empty
+            chatFilter.user_id = { $in: [] };
+        }
+
+        // -------------------
+        // 4. Fetch total count + paginated chats
+        // -------------------
+        const [count, chats] = await Promise.all([
+            adminChatModel.countDocuments(chatFilter),
+            adminChatModel.find(chatFilter)
+                .populate("user_id")
+                .sort({ updatedAt: -1 })
+                .skip(skip)
+                .limit(parsedLimit)
+        ]);
+
+        // -------------------
+        // 5. Format result
+        // -------------------
         const list = chats.map(chat => {
             const lastMessage = chat.message.length > 0 ? chat.message[chat.message.length - 1] : null;
             return {
@@ -98,10 +148,17 @@ const getList = async (req, res) => {
             };
         });
 
-        return res.status(200).json({ list });
+        return res.status(200).json({
+            page: parsedPage,
+            limit: parsedLimit,
+            totalChats: count,
+            totalPages: Math.ceil(count / parsedLimit),
+            list
+        });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ err: "Something went wrong" });
+        console.error("Error fetching chat list:", error);
+        return res.status(500).json({ err: "Internal server error." });
     }
 };
 

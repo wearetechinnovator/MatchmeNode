@@ -63,15 +63,6 @@ router
     .route("/notify")
     .post(notificationSend);
 
-
-router
-    .route("/get-all-tickets")
-    .post(get);
-
-router
-    .route("/get-single-chats")
-    .post(getChat);
-
 router
     .route("/add-chats")
     .post(addChat);
@@ -79,7 +70,7 @@ router
 
 router
     .route("/chat-lists")
-    .get(getList)
+    .post(getList)
 
 router
     .route("/change-read-status")
