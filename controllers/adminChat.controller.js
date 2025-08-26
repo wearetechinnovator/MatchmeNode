@@ -82,7 +82,7 @@ const get = async (req, res) => {
 
 }
 
-// :::::::::::::::::::::::::::: GET CHAT LIST ::::::::::::::::::::::::::::
+// :::::::::::::::::::::::::::: GET CHAT LISTS ::::::::::::::::::::::::::::
 const getList = async (req, res) => {
     try {
         const chats = await adminChatModel
@@ -98,7 +98,7 @@ const getList = async (req, res) => {
             };
         });
 
-        return res.status(200).json({list});
+        return res.status(200).json({ list });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ err: "Something went wrong" });
@@ -142,7 +142,7 @@ const changeReadStatus = async (req, res) => {
 
 // ::::::::::::::: ADD CHAT ::::::::::::::::: 
 const addChat = async (req, res) => {
-    const { msg, msgId, msgBy } = req.body;
+    const { msg, userId, msgBy } = req.body;
 
 
     if (!msg || !msgBy) {
@@ -155,8 +155,8 @@ const addChat = async (req, res) => {
 
     try {
 
-        const updatedChat = await adminChatModel.findByIdAndUpdate(
-            msgId,
+        const updatedChat = await adminChatModel.findOneAndUpdate(
+            { user_id: userId },
             {
                 $push: {
                     message: {
@@ -182,17 +182,18 @@ const addChat = async (req, res) => {
 
 }
 
+
 // ::::::::::::::: GET CHAT ::::::::::::::::: 
 const getChat = async (req, res) => {
-    const { msgId } = req.body;
+    const { userId } = req.body;
 
 
-    if (!msgId) {
-        return res.status(400).json({ err: "Message id required" });
+    if (!userId) {
+        return res.status(400).json({ err: "User id required" });
     }
 
     try {
-        const chat = await adminChatModel.findById(msgId);
+        const chat = await adminChatModel.findOne({ user_id: userId });
 
         if (!chat) {
             return res.status(404).json({ err: "Chat not found" });
