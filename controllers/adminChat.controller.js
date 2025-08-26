@@ -115,7 +115,7 @@ const getList = async (req, res) => {
         // -------------------
         const filteredUsers = await usersModel.find(userFilter).select("_id");
         const userIds = filteredUsers.map(u => u._id);
-        
+
         // 3. Chat filter based on userIds
         let chatFilter = {};
         if (userIds.length > 0) {
@@ -144,7 +144,8 @@ const getList = async (req, res) => {
             const lastMessage = chat.message.length > 0 ? chat.message[chat.message.length - 1] : null;
             return {
                 user: chat.user_id,
-                lastMessage
+                lastMessage,
+                updatedAt: chat.updatedAt
             };
         });
 
