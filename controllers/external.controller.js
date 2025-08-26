@@ -696,6 +696,27 @@ const uploadAgreement = async (req, res) => {
 };
 
 
+// ::::::::::::::::::::::::::::: GET USER AGREEMENTS ::::::::::::::::::::::::::
+const getAgreements = async (req, res) => {
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ err: "Uesr id is required" });
+    }
+
+    try {
+        const getAgg = await usersModel.findOne({ _id: userId }, { agreement_file: 1, _id: 0 });
+
+        const filePath = path.join(__dirname, '..', 'user_agreements', getAgg.agreement_file);
+        res.status(200).json({file: filePath});
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ err: "Something went wrong" });
+    }
+
+}
+
 
 
 
@@ -715,5 +736,6 @@ module.exports = {
     userFeedBack,
     changeStatus,
     uploadAgreement,
-    changeProfileType
+    changeProfileType,
+    getAgreements
 }

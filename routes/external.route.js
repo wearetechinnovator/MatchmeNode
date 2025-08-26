@@ -9,7 +9,8 @@ const {
     userFeedBack,
     changeStatus,
     uploadAgreement,
-    changeProfileType
+    changeProfileType,
+    getAgreements
 } = require("../controllers/external.controller");
 
 
@@ -97,6 +98,11 @@ router
 router
     .route("/upload-agreement")
     .post(uploadAgreement);    
+
+    
+router
+    .route("/get-agreements")
+    .post(getAgreements);
 
 
 module.exports = router;

@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema({
     family_picture: String,
     full_body_picture: String,
     fun_picture: String,
-    user_type: { type: String, enum: ["user", "admin"], default: "user" },
+    user_type: { type: String, enum: ["user", "admin"]},
     eating_preferences: { type: String, trim: true },
     how_often_you_drink: { type: String, trim: true },
     are_you_a_smoker: { type: String, trim: true },

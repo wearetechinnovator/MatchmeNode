@@ -295,7 +295,7 @@ const uploadAgreement = async (req, res) => {
         }
 
         const filename = "agreement_" + Date.now() + ".pdf";
-        const filepath = path.join(__dirname, "user_agreements", filename);
+        const filepath = path.join(__dirname, "..", "user_agreements", filename);
 
         fs.mkdirSync(path.dirname(filepath), { recursive: true });
 
@@ -321,6 +321,7 @@ const uploadAgreement = async (req, res) => {
 
 }
 
+// :::::::::::::::::::: VIEW OR DOWNLOAD ADMIN AGREEMENT :::::::::::::::::
 const viewAgreement = async (req, res) => {
     try {
         const filePath = path.join(__dirname, '..', 'agreement', "agreement.pdf");
