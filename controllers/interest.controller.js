@@ -21,6 +21,9 @@ const sendInterest = async (req, res) => {
 
 
     try {
+        // Get user info
+        const userInfo = await usersModel.findOne({ _id: userData._id });
+
         if (type === 0) {
             await matchModel.updateOne(
                 { user_id: new mongoose.Types.ObjectId(userData._id) },
@@ -54,6 +57,16 @@ const sendInterest = async (req, res) => {
                 ]
             );
 
+            // Send and Store Notification 
+            const FCMtoken = await getToken(matchUserId);
+            await sendNotification({
+                tokens: FCMtoken,
+                userId: matchUserId,
+                title: "Interest Pending",
+                body: `Your interest in ${userInfo.full_name} is awaiting a response.`,
+                type: "interest"
+            });
+
             return res.status(200);
         }
 
@@ -76,8 +89,7 @@ const sendInterest = async (req, res) => {
             return res.status(500).json({ err: "Interest not send" });
         }
 
-        // Get matchuser info
-        const matchUser = await usersModel.findOne({ _id: matchUserId });
+
 
 
         // ::::::::::::::::::::::: Send and Store Notification :::::::::::::::::;
@@ -87,11 +99,20 @@ const sendInterest = async (req, res) => {
             await sendNotification({
                 tokens: FCMtoken,
                 userId: matchUserId,
-                title: "You’ve received a new interest.",
-                body: `Someone has shown interest in you`,
+                title: "New Interest Received",
+                body: `${userInfo.full_name} has expressed interest in you.`,
                 type: "interest"
             });
 
+        } else {
+            const FCMtoken = await getToken(matchUserId);
+            await sendNotification({
+                tokens: FCMtoken,
+                userId: matchUserId,
+                title: "Interest Withdrawn",
+                body: `${userInfo.full_name} has withdrawn their interest in your profile.`,
+                type: "interest"
+            });
         }
 
         return res.status(200).json({ msg: "Interest send successfully" });
@@ -180,7 +201,7 @@ const sendConnection = async (req, res) => {
     const { connectionUserId, type } = req.body;
     const userData = req.userData;
     const kolkataTime = new Date();
-    const intesetOption = {
+    const connectionOption = {
         0: "rejected",
         1: "accepted",
         2: "removed"
@@ -188,6 +209,7 @@ const sendConnection = async (req, res) => {
 
 
     try {
+        const userInfo = await usersModel.findOne({ _id: userData._id });
 
         const result = await matchModel.updateOne(
             {
@@ -196,7 +218,7 @@ const sendConnection = async (req, res) => {
             },
             {
                 $set: {
-                    "matches.$[elem].status": intesetOption[type],
+                    "matches.$[elem].status": connectionOption[type],
                     "matches.$[elem].status_change_date": kolkataTime
                 }
             },
@@ -221,14 +243,36 @@ const sendConnection = async (req, res) => {
         });
 
         // ::::::::::::::::::::::: Send and Store Notification :::::::::::::::::;
+
         const FCMtoken = await getToken(connectionUserId);
-        await sendNotification({
-            tokens: FCMtoken,
-            userId: connectionUserId,
-            title: "You’ve made a new connection.",
-            body: `Someone is now connected with you.`,
-            type: "connection"
-        });
+        if (type === 0) {
+            await sendNotification({
+                tokens: FCMtoken,
+                userId: connectionUserId,
+                title: "Connection Declined",
+                body: `${userInfo.full_name} has declined your connection request.`,
+                type: "connection"
+            });
+        }
+        else if (type === 1) {
+            await sendNotification({
+                tokens: FCMtoken,
+                userId: connectionUserId,
+                title: "You’ve made a new connection.",
+                body: `${userInfo.full_name} is now connected with you.`,
+                type: "connection"
+            });
+        }
+        else if (type === 2) {
+            await sendNotification({
+                tokens: FCMtoken,
+                userId: connectionUserId,
+                title: "Connection Removed",
+                body: `${userInfo.full_name} has removed the connection.`,
+                type: "connection"
+            });
+        }
+
 
 
         return res.status(200).json({ msg: "Connection set successfully" });
@@ -304,8 +348,8 @@ const getConnection = async (req, res) => {
 
 
 module.exports = {
-    sendInterest, 
-    getInterest, 
-    sendConnection, 
+    sendInterest,
+    getInterest,
+    sendConnection,
     getConnection
 }

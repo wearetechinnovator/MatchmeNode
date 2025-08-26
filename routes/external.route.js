@@ -99,10 +99,5 @@ router
     .route("/upload-agreement")
     .post(uploadAgreement);    
 
-    
-router
-    .route("/get-agreements")
-    .post(getAgreements);
-
 
 module.exports = router;

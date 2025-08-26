@@ -15,6 +15,7 @@ const fs = require("fs");
 const path = require("path");
 
 
+
 // ::::::::::: USER REGISTER ::::::::::::
 const register = async (req, res) => {
     const {
@@ -491,6 +492,8 @@ const pushMatch = async (req, res) => {
         "matches.match_user_id": match_userId
     });
 
+    const matchUserInfo = await usersModel.findOne({ _id: match_userId });
+
     if (check) {
         return res.status(400).json({ err: "Already matched" });
     }
@@ -519,8 +522,8 @@ const pushMatch = async (req, res) => {
         await sendNotification({
             tokens: FCMtoken,
             userId: userId,
-            title: "You have a new match!",
-            body: `You matched with 1 profile.`,
+            title: "New Match Found",
+            body: `You’ve been matched with ${matchUserInfo.full_name}.`,
             type: "match"
         });
 
@@ -696,28 +699,6 @@ const uploadAgreement = async (req, res) => {
 };
 
 
-// ::::::::::::::::::::::::::::: GET USER AGREEMENTS ::::::::::::::::::::::::::
-const getAgreements = async (req, res) => {
-    const { userId } = req.body;
-
-    if (!userId) {
-        return res.status(400).json({ err: "Uesr id is required" });
-    }
-
-    try {
-        const getAgg = await usersModel.findOne({ _id: userId }, { agreement_file: 1, _id: 0 });
-
-        const filePath = path.join(__dirname, '..', 'user_agreements', getAgg.agreement_file);
-        res.status(200).json({file: filePath});
-
-    } catch (error) {
-        console.error("Error:", error);
-        return res.status(500).json({ err: "Something went wrong" });
-    }
-
-}
-
-
 
 
 module.exports = {
@@ -736,6 +717,5 @@ module.exports = {
     userFeedBack,
     changeStatus,
     uploadAgreement,
-    changeProfileType,
-    getAgreements
+    changeProfileType
 }

@@ -1,87 +1,10 @@
 const adminChatModel = require("../models/adminChat.model");
 const usersModel = require("../models/users.model");
+const sendNotification = require("../services/sendNotification");
+const { getToken } = require("./notification.controller");
+const jwt = require("jsonwebtoken");
+const jwtKey = process.env.JWT_KEY;
 
-
-// ::::::::::::::: ADD MESSAGE TICKETS ::::::::::::::::: 
-const add = async (req, res) => {
-    const { msg, type } = req.body;
-    const userData = req.userData;
-
-
-    if (!msg || !type) {
-        return res.status(500).json({ err: "type and message required" });
-    }
-
-    try {
-        const insert = await adminChatModel.create({
-            user_id: userData._id,
-            Qtype: type,
-            message: [{ message: msg, message_by: "user" }]
-        })
-
-        if (!insert) {
-            return res.status(500).json({ err: "Failed to insert message" });
-        }
-
-        return res.status(200).json({
-            _id: insert._id,
-            user_id: insert.user_id,
-            Qtype: insert.Qtype,
-            lastMessage: insert.message[insert.message.length - 1]
-        });
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ err: "Something went wrong" })
-    }
-
-}
-
-// ::::::::::::::: GET ALL SUPPORT TICKETS WITH LAST MESSAGE ::::::::::::::::: 
-const get = async (req, res) => {
-    const userId = req.body?.userId || undefined;
-    const userData = req.userData;
-
-    try {
-        let allChat
-
-        // Admin only
-        if (!userData && !userId) {
-            allChat = await adminChatModel.find().populate("user_id").sort({ _id: -1 });
-        }
-        else {
-            if (userData) {
-                allChat = await adminChatModel.find({ user_id: userData._id }).populate("user_id").sort({ _id: -1 });
-            } else if (userId) {
-                allChat = await adminChatModel.find({ user_id: userId }).populate("user_id").sort({ _id: -1 });
-            }
-        }
-
-        if (!allChat || allChat.length < 0) {
-            return res.status(400).json({ err: "No chat available" });
-        }
-
-        allChat = allChat.map(chat => {
-            return {
-                _id: chat._id,
-                user_id: chat.user_id._id,
-                user_details: chat.user_id,
-                Qtype: chat.Qtype,
-                lastMessage: chat.message[chat.message.length - 1]
-            };
-        });
-
-
-        return res.status(200).json(allChat);
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ err: "Something went wrong" });
-    }
-
-}
 
 // :::::::::::::::::::::::::::: GET CHAT LISTS ::::::::::::::::::::::::::::
 const getList = async (req, res) => {
@@ -166,7 +89,13 @@ const getList = async (req, res) => {
 
 // ::::::::::::::::::::::::::::: CHANGE READ STATUS ::::::::::::::::::::::::
 const changeReadStatus = async (req, res) => {
-    const { userId, type } = req.body;
+    let { userId, type, token } = req.body;
+
+    if (token) {
+        const decoded = jwt.verify(token, jwtKey);
+        const user = await usersModel.findOne({ _id: decoded.id });
+        userId = user._id
+    }
 
     if (!userId || !type) {
         return res.status(500).json({ err: "Message id and type required" });
@@ -200,7 +129,18 @@ const changeReadStatus = async (req, res) => {
 
 // ::::::::::::::: ADD CHAT ::::::::::::::::: 
 const addChat = async (req, res) => {
-    const { msg, userId, msgBy } = req.body;
+    let { msg, userId, msgBy, token } = req.body;
+
+    if (token) {
+        const decoded = jwt.verify(token, jwtKey);
+        const user = await usersModel.findOne({ _id: decoded.id });
+        userId = user._id
+    }
+
+    if (!userId) {
+        return res.status(400).json({ err: "Message id required" });
+    }
+
 
     if (!msg || !msgBy) {
         return res.status(400).json({ err: "Message and sender are required" });
@@ -228,6 +168,18 @@ const addChat = async (req, res) => {
             }
         );
 
+        if (msgBy === "admin") {
+            const FCMtoken = await getToken(userId);
+            await sendNotification({
+                tokens: FCMtoken,
+                userId: userId,
+                title: "Message from admin",
+                body: msg,
+                type: "message"
+            });
+        }
+
+
         return res.status(200).json(updatedChat.message);
 
     } catch (error) {
@@ -237,10 +189,15 @@ const addChat = async (req, res) => {
 };
 
 
-
 // :::::::::::::::::::: GET CHAT :::::::::::::::::::::::: 
 const getChat = async (req, res) => {
-    const { userId } = req.body;
+    let { userId, token } = req.body;
+
+    if (token) {
+        const decoded = jwt.verify(token, jwtKey);
+        const user = await usersModel.findOne({ _id: decoded.id });
+        userId = user._id
+    }
 
 
     if (!userId) {
@@ -267,7 +224,6 @@ const getChat = async (req, res) => {
 
 
 module.exports = {
-    add, get,
     changeReadStatus,
     addChat,
     getChat,

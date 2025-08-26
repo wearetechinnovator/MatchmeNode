@@ -1,16 +1,6 @@
 const router = require("express").Router();
-const { add, get, changeReadStatus, addChat, getChat } = require("../controllers/adminChat.controller");
+const {changeReadStatus, addChat, getChat } = require("../controllers/adminChat.controller");
 const middleware = require("../middleware/middleware");
-
-
-router
-    .route("/add")
-    .post(middleware, add)
-
-
-router
-    .route("/get")
-    .get(middleware, get)
 
 
 router

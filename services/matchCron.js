@@ -84,5 +84,5 @@ const matchCron = async () => {
     console.log("[*] Cron Scheduled:", scheduleExpersion, "IST");
 };
 
-module.exports = { matchCron };
 
+module.exports = { matchCron };

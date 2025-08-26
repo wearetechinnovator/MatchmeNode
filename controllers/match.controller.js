@@ -213,7 +213,7 @@ const add = async () => {
                     tokens: FCMtoken,
                     userId: user._id,
                     title: "You have a new match!",
-                    body: `You matched with ${filteredMatch.length} profiles}.`,
+                    body: `You matched with ${filteredMatch.length} profiles.`,
                     type: "match"
                 });
             }

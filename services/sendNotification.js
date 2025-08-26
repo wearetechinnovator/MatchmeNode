@@ -19,7 +19,7 @@ const sendNotification = async ({ tokens, title, body, userId, type }) => {
             },
 
             data: {
-                customKey: "customValue",
+                customKey: type,
             },
         });
 
