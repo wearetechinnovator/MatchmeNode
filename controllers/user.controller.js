@@ -121,9 +121,9 @@ const update = async (req, res) => {
         // userData come from middleware;
         const userData = req.userData;
 
-        const update = await userModel.updateOne({ _id: userData._id, is_subscribed:true, is_del: false }, {
+        const update = await userModel.updateOne({ _id: userData._id, is_subscribed: true, is_del: false }, {
             $set: {
-                whatsapp_number,member_type, email, full_name, nick_name,
+                whatsapp_number, member_type, email, full_name, nick_name,
                 gender, dob, birth_time, birth_place, pin_code, country, locality, address,
                 nationality, nationality_details, religion, community, medical_history, height,
                 weight, marital_status, should_weight_display_on_profile, do_have_kids, father_name,
@@ -210,7 +210,6 @@ const get = async (req, res) => {
 
 // :::::::::::: SET PROFILE PICTURES :::::::::::::
 const upload = async (req, res) => {
-    console.log('run....')
     if (!req.filePaths || Object.keys(req.filePaths).length < 1) {
         return res.status(400).json({ err: "No files uploaded" });
     }
@@ -277,6 +276,62 @@ const upload = async (req, res) => {
 };
 
 
+// :::::::::::::::::::: UPLOAD AGREEMENT :::::::::::::::::
+const uploadAgreement = async (req, res) => {
+    const { file, step } = req.body; //base64
+    const userData = req.userData;
+
+    if (!file) {
+        return res.status(400).json({ err: "file is required" });
+    }
+
+
+    try {
+        const buffer = Buffer.from(file, "base64");
+        const pdfMagic = buffer.subarray(0, 4).toString();
+
+        if (pdfMagic !== "%PDF") {
+            return res.status(400).json({ err: "Only valid PDF files are allowed" });
+        }
+
+        const filename = "agreement_" + Date.now() + ".pdf";
+        const filepath = path.join(__dirname, "user_agreements", filename);
+
+        fs.mkdirSync(path.dirname(filepath), { recursive: true });
+
+        fs.writeFileSync(filepath, buffer);
+
+
+        if (fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
+            await userModel.updateOne({ _id: userData._id }, {
+                $set: {
+                    agreement_file: filename,
+                    registration_step: step
+                }
+            });
+            return res.status(200).json({ message: "File uploaded successfully" });
+        } else {
+            return res.status(500).json({ err: "File upload failed" });
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ err: "Something went wrong" });
+    }
+
+}
+
+const viewAgreement = async (req, res) => {
+    try {
+        const filePath = path.join(__dirname, '..', 'agreement', "agreement.pdf");
+        res.sendFile(filePath);
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ err: "Something went wrong" });
+    }
+}
+
 // ::::::::::: VIEW PROFILE PICTURE ::::::::::::
 // Get request for viewing photo; get filename from dynamic parameter;
 const viewPhoto = async (req, res) => {
@@ -293,6 +348,10 @@ const viewPhoto = async (req, res) => {
 }
 
 
+
+
+
 module.exports = {
-    update, login, get, upload, viewPhoto
+    update, login, get, upload, viewPhoto,
+    uploadAgreement, viewAgreement
 }

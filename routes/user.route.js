@@ -1,4 +1,4 @@
-const { update, login, get, upload, viewPhoto } = require("../controllers/user.controller");
+const { update, login, get, upload, viewPhoto, uploadAgreement, viewAgreement } = require("../controllers/user.controller");
 const middleware = require("../middleware/middleware");
 const router = require("express").Router();
 const imageMiddleware = require("../helper/imageUpload");
@@ -25,6 +25,16 @@ router
     .post(imageMiddleware, middleware,  upload);
 
 
+router
+    .route("/upload-agreement")
+    .post(middleware,  uploadAgreement);
+
+
+router
+    .route("/view-agreement")
+    .get(viewAgreement);
+
+    
 router
     .route("/upload/:filename")
     .get(viewPhoto);

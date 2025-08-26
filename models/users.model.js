@@ -89,6 +89,7 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false // ``false = Non member, true = Member``;
     },
+    agreement_file: String,
     registration_step: {
         type: String,
         default: 0

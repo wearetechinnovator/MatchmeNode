@@ -15,7 +15,9 @@ const app = express();
 app.use(cors()); //Allow all origin;
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
-app.use(express.static("uploads")); // Serve static files from the uploads directory
+app.use(express.static("uploads"));
+app.use(express.static("agreement"));
+app.use(express.static("user_agreements"));
 
 // LOG
 app.use(morgan('combined', { stream: accessLogStream }));

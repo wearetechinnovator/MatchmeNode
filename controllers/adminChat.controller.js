@@ -202,9 +202,8 @@ const changeReadStatus = async (req, res) => {
 const addChat = async (req, res) => {
     const { msg, userId, msgBy } = req.body;
 
-
     if (!msg || !msgBy) {
-        return res.status(500).json({ err: "type and message required" });
+        return res.status(400).json({ err: "Message and sender are required" });
     }
 
     if (!['admin', 'user'].includes(msgBy)) {
@@ -212,7 +211,6 @@ const addChat = async (req, res) => {
     }
 
     try {
-
         const updatedChat = await adminChatModel.findOneAndUpdate(
             { user_id: userId },
             {
@@ -223,25 +221,24 @@ const addChat = async (req, res) => {
                     }
                 }
             },
-            { new: true } // ✅ this now works
+            {
+                new: true,        // return updated doc
+                upsert: true,     // insert new doc if not found
+                setDefaultsOnInsert: true // if schema has defaults
+            }
         );
-
-        if (!updatedChat) {
-            return res.status(404).json({ err: "Chat not found" });
-        }
 
         return res.status(200).json(updatedChat.message);
 
-
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({ err: "Something went wrong" })
+        console.error(error);
+        return res.status(500).json({ err: "Something went wrong" });
     }
+};
 
-}
 
 
-// ::::::::::::::: GET CHAT ::::::::::::::::: 
+// :::::::::::::::::::: GET CHAT :::::::::::::::::::::::: 
 const getChat = async (req, res) => {
     const { userId } = req.body;
 
