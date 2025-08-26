@@ -166,9 +166,9 @@ const getList = async (req, res) => {
 
 // ::::::::::::::::::::::::::::: CHANGE READ STATUS ::::::::::::::::::::::::
 const changeReadStatus = async (req, res) => {
-    const { messageId, type } = req.body;
+    const { userId, type } = req.body;
 
-    if (!messageId || !type) {
+    if (!userId || !type) {
         return res.status(500).json({ err: "Message id and type required" });
     }
 
@@ -179,7 +179,7 @@ const changeReadStatus = async (req, res) => {
 
     try {
         const result = await adminChatModel.updateOne(
-            { _id: messageId, "message.message_by": type },
+            { _id: userId, "message.message_by": type },
             { $set: { "message.$[elem].readStatus": true } },
             { arrayFilters: [{ "elem.message_by": type }] }
         );
