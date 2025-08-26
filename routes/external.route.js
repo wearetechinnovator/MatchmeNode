@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getChat, addChat, changeReadStatus, get } = require("../controllers/adminChat.controller");
+const { getChat, addChat, changeReadStatus, get, getList } = require("../controllers/adminChat.controller");
 const {
     matchCronSetup, allUserCount, changeSubscriptionStatus,
     deleteUser, getAllUser, getUserDetails,
@@ -75,6 +75,11 @@ router
 router
     .route("/add-chats")
     .post(addChat);
+
+
+router
+    .route("/chat-lists")
+    .get(getList)
 
 router
     .route("/change-read-status")

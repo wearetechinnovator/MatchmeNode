@@ -82,6 +82,29 @@ const get = async (req, res) => {
 
 }
 
+// :::::::::::::::::::::::::::: GET CHAT LISTS ::::::::::::::::::::::::::::
+const getList = async (req, res) => {
+    try {
+        const chats = await adminChatModel
+            .find()
+            .populate("user_id")
+            .sort({ _id: -1 });
+
+        const list = chats.map(chat => {
+            const lastMessage = chat.message.length > 0 ? chat.message[chat.message.length - 1] : null;
+            return {
+                user: chat.user_id,
+                lastMessage
+            };
+        });
+
+        return res.status(200).json({ list });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ err: "Something went wrong" });
+    }
+};
+
 
 // ::::::::::::::::::::::::::::: CHANGE READ STATUS ::::::::::::::::::::::::
 const changeReadStatus = async (req, res) => {
@@ -159,6 +182,7 @@ const addChat = async (req, res) => {
 
 }
 
+
 // ::::::::::::::: GET CHAT ::::::::::::::::: 
 const getChat = async (req, res) => {
     const { userId } = req.body;
@@ -191,5 +215,6 @@ module.exports = {
     add, get,
     changeReadStatus,
     addChat,
-    getChat
+    getChat,
+    getList
 }
