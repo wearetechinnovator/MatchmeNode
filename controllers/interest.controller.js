@@ -8,7 +8,7 @@ const usersModel = require("../models/users.model");
 
 
 
-// :::::::::::: interested Send ::::::::::::
+// :::::::::::: interested `SEND` | `PENDING` | `REMOVED` ::::::::::::
 const sendInterest = async (req, res) => {
     const { matchUserId, type } = req.body;
     const userData = req.userData;
@@ -33,11 +33,29 @@ const sendInterest = async (req, res) => {
                             matches: {
                                 $concatArrays: [
                                     {
-                                        $filter: {
-                                            input: "$matches",
+                                        $map: {
+                                            input: {
+                                                $filter: {
+                                                    input: "$matches",
+                                                    as: "m",
+                                                    cond: {
+                                                        $eq: [
+                                                            "$$m.match_user_id",
+                                                            new mongoose.Types.ObjectId(matchUserId)
+                                                        ]
+                                                    }
+                                                }
+                                            },
                                             as: "m",
-                                            cond: {
-                                                $eq: ["$$m.match_user_id", new mongoose.Types.ObjectId(matchUserId)]
+                                            in: {
+                                                $mergeObjects: [
+                                                    "$$m",
+                                                    {
+                                                        interest_send: "pending",
+                                                        interest_send_date: kolkataTime,
+                                                        uset_act: true
+                                                    }
+                                                ]
                                             }
                                         }
                                     },
@@ -46,7 +64,10 @@ const sendInterest = async (req, res) => {
                                             input: "$matches",
                                             as: "m",
                                             cond: {
-                                                $ne: ["$$m.match_user_id", new mongoose.Types.ObjectId(matchUserId)]
+                                                $ne: [
+                                                    "$$m.match_user_id",
+                                                    new mongoose.Types.ObjectId(matchUserId)
+                                                ]
                                             }
                                         }
                                     }
@@ -67,7 +88,7 @@ const sendInterest = async (req, res) => {
                 type: "interest"
             });
 
-            return res.status(200);
+            return res.status(200).json({ msg: "Interest set to pending" });
         }
 
         const result = await matchModel.updateOne(
@@ -75,7 +96,8 @@ const sendInterest = async (req, res) => {
             {
                 $set: {
                     "matches.$[elem].interest_send": intesetOption[type],
-                    "matches.$[elem].interest_send_date": kolkataTime
+                    "matches.$[elem].interest_send_date": kolkataTime,
+                    "matches.$[elem].uset_act": true,
                 }
             },
             {
@@ -85,6 +107,16 @@ const sendInterest = async (req, res) => {
             }
         );
 
+        const countUnactedMatch = await matchModel.countDocuments({
+            user_id: userData._id,
+            "matches.user_act": false
+        });
+
+        if (countUnactedMatch === 0) {
+            usersModel.updateOne({ _id: user._id }, { $set: { get_new_match: true } });
+        }
+
+
         if (result.modifiedCount < 1) {
             return res.status(500).json({ err: "Interest not send" });
         }
@@ -93,7 +125,6 @@ const sendInterest = async (req, res) => {
 
 
         // ::::::::::::::::::::::: Send and Store Notification :::::::::::::::::;
-        // Only for `send` interest notification send;
         if (type === 1) {
             const FCMtoken = await getToken(matchUserId);
             await sendNotification({
@@ -196,7 +227,7 @@ const getInterest = async (req, res) => {
 }
 
 
-// :::::::::::: Connection ::::::::::::
+// ::::::::::::::::::: Connection ::::::::::::::::::::::
 const sendConnection = async (req, res) => {
     const { connectionUserId, type } = req.body;
     const userData = req.userData;
@@ -204,7 +235,7 @@ const sendConnection = async (req, res) => {
     const connectionOption = {
         0: "rejected",
         1: "accepted",
-        2: "removed"
+        2: "removed",
     };
 
 
@@ -263,15 +294,15 @@ const sendConnection = async (req, res) => {
                 type: "connection"
             });
         }
-        else if (type === 2) {
-            await sendNotification({
-                tokens: FCMtoken,
-                userId: connectionUserId,
-                title: "Connection Removed",
-                body: `${userInfo.full_name} has removed the connection.`,
-                type: "connection"
-            });
-        }
+        // else if (type === 2) {
+        //     await sendNotification({
+        //         tokens: FCMtoken,
+        //         userId: connectionUserId,
+        //         title: "Connection Pending",
+        //         body: `Your connection in ${userInfo.full_name} is awaiting a response.`,
+        //         type: "connection"
+        //     });
+        // }
 
 
 
