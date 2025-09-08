@@ -31,7 +31,7 @@ const login = async (req, res) => {
                 phone: findUser.whatsapp_number, id: findUser._id
             }, jwtKey);
 
-            return res.status(200).json({ token });
+            return res.status(200).json({ token, id: findUser._id });
 
         } catch (error) {
             console.log(error);
