@@ -12,7 +12,11 @@ const accessLogStream = require('./services/loger');
 const initSocket = require("./services/chat");
 const app = express();
 const server = http.createServer(app);
-const io = require("socket.io")(server);
+const io = require("socket.io")(server, {
+    cors: {
+        origin: "*",
+    }
+});
 
 
 app.use(cors()); //Allow all origin;
