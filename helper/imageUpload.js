@@ -62,9 +62,6 @@ const imageUpload = (req, res, next) => {
             }
         });
 
-        console.log('000000000000000000000');
-        console.log(req.filePaths)
-
 
         next();
     });
