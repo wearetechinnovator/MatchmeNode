@@ -5,7 +5,7 @@ const router = require("./routes/index.route");
 const connection = require("./db/connection");
 const checkSubscription = require("./services/subscriptionCron");
 const { matchCron } = require("./services/matchCron");
-const PORT = 8080 || process.env.PORT;
+const PORT = 3000 || process.env.PORT;
 const cors = require("cors");
 const morgan = require('morgan');
 const accessLogStream = require('./services/loger');
@@ -40,8 +40,8 @@ app.get("/", (req, res) => {
 
 
 // Run CRON Jobs
-// checkSubscription.start();
-// matchCron();
+checkSubscription.start();
+matchCron();
 
 // initial socket
 initSocket(io);
