@@ -256,7 +256,7 @@ const upload = async (req, res) => {
 
         
         console.log("-----------------------")
-        console.log(updatedImage)
+        console.log(req.filePaths)
 
         // Update the user document
         const result = await userModel.updateOne(
