@@ -60,6 +60,10 @@ const imageUpload = (req, res, next) => {
                 req.filePaths[field] = req.files[field][0].path.split('uploads\\')[1]; // Store relative path
             }
         });
+        
+        console.log('000000000000000000000');
+        console.log(req.filePaths)
+
 
         next();
     });
