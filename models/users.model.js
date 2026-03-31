@@ -94,6 +94,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 0
     },
+    token_hash:String, // For login via URL
     is_del: {
         type: Boolean,
         default: false

@@ -13,6 +13,7 @@ const passwordGenerator = require("../helper/passGen");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
+const crypto = require('crypto')
 
 
 
@@ -699,6 +700,39 @@ const uploadAgreement = async (req, res) => {
 };
 
 
+// Genarate HASH for login using URL;
+const loginHashGenarate = async (req, res)=>{
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ err: 'Userid is required' });
+    }
+
+    
+    try {
+        // Genarate Hash
+        const hashToken = crypto.randomBytes(32).toString("hex");
+        const URL = `http://localhost:5173/login?token=${hashToken}&d=${btoa(userId)}`;
+
+        // Update userModel
+        const update = await usersModel.updateOne({_id: userId}, {$set: {
+            token_hash: hashToken
+        }});
+
+        // Send to Admin
+        if(update.modifiedCount === 0){
+           return res.status(500).json({err: 'Hash not genarate'});
+        }
+
+        return res.status(200).json({data: URL});
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ err: "Something went wrong" });
+    }
+
+}
+
 
 
 module.exports = {
@@ -717,5 +751,6 @@ module.exports = {
     userFeedBack,
     changeStatus,
     uploadAgreement,
-    changeProfileType
+    changeProfileType,
+    loginHashGenarate
 }

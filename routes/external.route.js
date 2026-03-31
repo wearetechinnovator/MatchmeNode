@@ -10,7 +10,8 @@ const {
     changeStatus,
     uploadAgreement,
     changeProfileType,
-    getAgreements
+    getAgreements,
+    loginHashGenarate
 } = require("../controllers/external.controller");
 
 
@@ -97,7 +98,11 @@ router
 
 router
     .route("/upload-agreement")
-    .post(uploadAgreement);    
+    .post(uploadAgreement);
+    
+router
+    .route("/genarate-login-hash")
+    .post(loginHashGenarate);
 
 
 module.exports = router;

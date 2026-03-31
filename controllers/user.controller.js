@@ -9,7 +9,7 @@ const fs = require('fs');
 
 // ::::::::::: USER LOGIN ::::::::::::
 const login = async (req, res) => {
-    const { userid, pass, emailPhone } = req.body;
+    const { userid, pass, emailPhone, hashToken, hashUserId } = req.body;
 
     if (userid && pass) {
         try {
@@ -83,6 +83,34 @@ const login = async (req, res) => {
             return res.status(500).json({ err: "Something went wrong" });
         }
 
+    }
+    else if(hashToken && hashUserId){
+        try {
+            // Check username and password;
+            const findUser = await userModel.findOne({
+                $and: [
+                    { _id: hashUserId }, { token_hash: hashToken }, { is_subscribed: true }, { is_del: false }
+                ]
+            });
+
+            if (!findUser) {
+                return res.status(500).json({ err: 'Incorrect username or password' })
+            }
+
+
+            // Create token;
+            const token = jwt.sign({
+                email: findUser.email, username: findUser.user_name,
+                phone: findUser.whatsapp_number, id: findUser._id
+            }, jwtKey);
+
+            return res.status(200).json({ token });
+
+            
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ err: "Something went wrong" });
+        }
     }
     else {
         return res.status(500).json({ err: "fill the require" });
@@ -347,7 +375,6 @@ const viewPhoto = async (req, res) => {
         return res.status(500).json({ err: "Something went wrong" });
     }
 }
-
 
 
 

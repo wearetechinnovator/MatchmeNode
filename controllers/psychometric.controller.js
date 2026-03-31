@@ -4,6 +4,17 @@ const usersModel = require("../models/users.model");
 
 
 const add = async (req, res) => {
+    // Sample data:~
+    // [{
+    //     "_id": "q1",
+    //     "question": "Your question text",
+    //     "options": [
+    //         {
+    //             "answer": "A",
+    //             "categories": ["love", "trust"]
+    //         }
+    //     ]
+    // }]
     const { questionAnswer } = req.body;
 
     // Check requirement;
@@ -17,7 +28,7 @@ const add = async (req, res) => {
 
         questionAnswer.forEach(q => {
             q.options.forEach(opt => {
-                opt.categories.forEach(cat => {
+                opt.categories?.forEach(cat => {
                     if (categoryCount.hasOwnProperty(cat)) {
                         categoryCount[cat]++;
                     }
