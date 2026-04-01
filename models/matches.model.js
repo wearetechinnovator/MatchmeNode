@@ -12,6 +12,10 @@ const matchArray = new mongoose.Schema({
         default:"pending"
     },
     interest_send_date: Date,
+    uset_act: {
+        type: Boolean,
+        default: false
+    },
     status: {
         type: String,
         enum: ["pending", "accepted", "rejected", "removed"],

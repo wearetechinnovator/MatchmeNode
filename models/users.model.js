@@ -89,6 +89,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false // ``false = Non member, true = Member``;
     },
+    get_new_match: {
+        type: Boolean,
+        default: true 
+    },
     agreement_file: String,
     registration_step: {
         type: String,

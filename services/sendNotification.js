@@ -33,7 +33,7 @@ const sendNotification = async ({ tokens, title, body, userId, type }) => {
             await notificationModel.create(data);
         }
 
-        console.log("Notification sent successfully:", response);
+        // console.log("Notification sent successfully:", response);
     } catch (error) {
         console.error("Error sending notification:", error);
     }

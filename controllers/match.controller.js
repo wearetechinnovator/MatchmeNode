@@ -13,8 +13,8 @@ const add = async () => {
 
     try {
         const allUser = await userModel.find({
-            is_subscribed: true, is_del: false, registration_status: "1",psychometric_test:true
-            ,member_type:1, profile_status:true
+            is_subscribed: true, is_del: false, registration_status: "1", psychometric_test: true,
+            member_type: 1, profile_status: true, get_new_match: true
         });
         const numberOfMatch = await matchCronModel.findOne(); //Get Match CORN
 
@@ -120,9 +120,9 @@ const add = async () => {
                     $match: {
                         _id: { $ne: user._id },
                         is_subscribed: true,
-                        psychometric_test:true,
-                        profile_status:true,
-                        profile_type:true,
+                        psychometric_test: true,
+                        profile_status: true,
+                        profile_type: true,
                         is_del: false,
                         registration_status: "1",
                         gender: prefGender,
@@ -159,15 +159,15 @@ const add = async () => {
                         whatsapp_number: 1,
                         user_name: 1,
                         psychometric_category: 1,
-                        gender : 1,
-                        dob : 1,
-                        height : 1,
-                        family_background : 1,
-                        highest_qualification : 1,
-                        marital_status : 1,
-                        nationality : 1,
-                        religion : 1,
-                        personal_anual_income : 1
+                        gender: 1,
+                        dob: 1,
+                        height: 1,
+                        family_background: 1,
+                        highest_qualification: 1,
+                        marital_status: 1,
+                        nationality: 1,
+                        religion: 1,
+                        personal_anual_income: 1
                     },
                 }
             ]);
@@ -205,6 +205,8 @@ const add = async () => {
                     },
                     { upsert: true }
                 );
+
+                userModel.updateOne({ _id: user._id }, { $set: { get_new_match: false } });
 
 
                 // ::::::::::::::::::::::: Send and Store Notification :::::::::::::::::;

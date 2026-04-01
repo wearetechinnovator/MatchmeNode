@@ -57,9 +57,11 @@ const imageUpload = (req, res, next) => {
 
         fields.forEach(field => {
             if (req.files[field]?.[0]) {
-                req.filePaths[field] = req.files[field][0].path.split('uploads\\')[1]; // Store relative path
+                const filePath = req.files[field][0].path;
+                req.filePaths[field] = path.relative(path.join(__dirname, '../uploads'), filePath);
             }
         });
+
 
         next();
     });

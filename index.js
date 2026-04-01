@@ -1,15 +1,22 @@
 require("dotenv").config();
+const http = require("http")
 const express = require("express");
 const router = require("./routes/index.route");
 const connection = require("./db/connection");
 const checkSubscription = require("./services/subscriptionCron");
 const { matchCron } = require("./services/matchCron");
-const PORT = 8080 || process.env.PORT;
+const PORT = 3000 || process.env.PORT;
 const cors = require("cors");
 const morgan = require('morgan');
 const accessLogStream = require('./services/loger');
+const initSocket = require("./services/chat");
 const app = express();
-
+const server = http.createServer(app);
+const io = require("socket.io")(server, {
+    cors: {
+        origin: "*",
+    }
+});
 
 
 app.use(cors()); //Allow all origin;
@@ -36,11 +43,14 @@ app.get("/", (req, res) => {
 checkSubscription.start();
 matchCron();
 
+// initial socket
+initSocket(io);
+
 
 // DB connection..
 connection().then(con => {
     if (con) {
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log("[*] Server running on " + PORT);
         })
     } else {
@@ -49,3 +59,4 @@ connection().then(con => {
 }).catch((er) => {
     console.log("[*] Something went wrong: ", er)
 })
+
