@@ -84,7 +84,7 @@ const login = async (req, res) => {
         }
 
     }
-    else if(hashToken && hashUserId){
+    else if (hashToken && hashUserId) {
         try {
             // Check username and password;
             const findUser = await userModel.findOne({
@@ -106,7 +106,7 @@ const login = async (req, res) => {
 
             return res.status(200).json({ token });
 
-            
+
         } catch (error) {
             console.log(error);
             return res.status(500).json({ err: "Something went wrong" });
@@ -315,10 +315,12 @@ const uploadAgreement = async (req, res) => {
 
 
     try {
-        const buffer = Buffer.from(file, "base64");
-        const pdfMagic = buffer.subarray(0, 4).toString();
+        const base64Data = file.replace(/^data:application\/pdf;base64,/, "");
+        const buffer = Buffer.from(base64Data, "base64");
 
-        if (pdfMagic !== "%PDF") {
+        const pdfMagic = buffer.subarray(0, 10).toString("utf8");
+
+        if (!pdfMagic.includes("%PDF")) {
             return res.status(400).json({ err: "Only valid PDF files are allowed" });
         }
 
