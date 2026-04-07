@@ -106,7 +106,6 @@ const login = async (req, res) => {
 
             return res.status(200).json({ token });
 
-
         } catch (error) {
             console.log(error);
             return res.status(500).json({ err: "Something went wrong" });
@@ -137,7 +136,8 @@ const update = async (req, res) => {
         how_often_you_eat_out, how_often_you_travel, prefered_social_event,
         whom_do_you_like_going_out_with, how_spiritual_are_you, how_religious_are_you,
         about_yourself, marital_status_from_year, marital_status_to_year, city,
-        subscription_end_date, is_subscribed, category, interests, registration_status, registration_step
+        subscription_end_date, is_subscribed, category, interests, registration_status, registration_step,
+        details_of_passed_work, accept_terms_condition
     } = req.body;
 
     if (!token) {
@@ -166,7 +166,8 @@ const update = async (req, res) => {
                 how_often_you_eat_out, how_often_you_travel, prefered_social_event,
                 whom_do_you_like_going_out_with, how_spiritual_are_you, how_religious_are_you,
                 about_yourself, marital_status_from_year, marital_status_to_year, city,
-                subscription_end_date, is_subscribed, category, interests, registration_status, registration_step
+                subscription_end_date, is_subscribed, category, interests, registration_status, registration_step,
+                details_of_passed_work, accept_terms_condition
             }
         })
 
@@ -190,7 +191,8 @@ const update = async (req, res) => {
             how_often_you_eat_out, how_often_you_travel, prefered_social_event,
             whom_do_you_like_going_out_with, how_spiritual_are_you, how_religious_are_you,
             about_yourself, marital_status_from_year, marital_status_to_year, city,
-            subscription_end_date, is_subscribed, category, interests, registration_status, registration_step
+            subscription_end_date, is_subscribed, category, interests, registration_status, registration_step,
+            details_of_passed_work, accept_terms_condition
         });
 
     } catch (error) {

@@ -45,6 +45,7 @@ const userSchema = new mongoose.Schema({
     highest_degree: { type: String, trim: true },
     hometown: { type: String, trim: true },
     nature_of_work: { type: String, trim: true },
+    details_of_passed_work: { type: String, trim: true },
     industry: { type: String, trim: true },
     organization: { type: String, trim: true },
     designation: { type: String, trim: true },
@@ -69,13 +70,14 @@ const userSchema = new mongoose.Schema({
     how_spiritual_are_you: String,
     how_religious_are_you: String,
     about_yourself: String,
-    marital_status_from_year: Number,
-    marital_status_to_year: Number,
+    marital_status_from_year: Date, // change Number to Date
+    marital_status_to_year: Date, //*** change Number to Date
     subscription_end_date: Date,
     is_subscribed: { type: Boolean, default: false },
     profile_status: { type: Boolean, default: true }, //true = open | false = pause 
     profile_type: { type: Boolean, default: true }, //true = open | false = confidential 
     psychometric_test: { type: Boolean, default: false },
+    accept_terms_condition: { type: Boolean, default: false },
     admin_feedback: String,
     psychometric_category: String,
     category: String,
