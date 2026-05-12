@@ -1,3 +1,5 @@
+const nodemailer = require("nodemailer");
+
 const sendEmail = async ({ to, subject, url }) => {
     
     const htmlTemplate = `
