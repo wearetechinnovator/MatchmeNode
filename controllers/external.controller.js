@@ -98,7 +98,8 @@ const register = async (req, res) => {
         sendEmail({
             to: email,
             subject: "",
-            url: URL
+            url: URL,
+            fullName: full_name
         })
 
         return res.status(200).json({

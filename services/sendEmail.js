@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const sendEmail = async ({ to, subject, url }) => {
+const sendEmail = async ({ to, subject, url, fullName }) => {
     
     const htmlTemplate = `
     <!DOCTYPE html>
@@ -22,9 +22,9 @@ const sendEmail = async ({ to, subject, url }) => {
                         </tr>
                         <tr>
                             <td style="padding: 40px 30px;">
-                                <h2 style="margin: 0 0 20px 0; color: #214A49; font-size: 24px; font-weight: 600;">Welcome Back!</h2>
+                                <h2 style="margin: 0 0 20px 0; color: #214A49; font-size: 24px; font-weight: 600;">Welcome ${fullName}</h2>
                                 <p style="margin: 0 0 20px 0; color: #555555; font-size: 16px; line-height: 1.6;">
-                                    Click the button below to securely log in to your Matchme account. This link is unique to you and will expire in 24 hours for your security.
+                                    Click the button below to securely log in to your Matchme account. And complete your profile.
                                 </p>
                                 <table role="presentation" style="margin: 30px 0;">
                                     <tr>
@@ -43,7 +43,7 @@ const sendEmail = async ({ to, subject, url }) => {
                         </tr>
                         <tr>
                             <td style="background-color: #f8f8f8; padding: 30px; text-align: center; border-top: 1px solid #e0e0e0;">
-                                <p style="margin: 0 0 10px 0; color: #888888; font-size: 14px;">© 2024 Matchme. All rights reserved.</p>
+                                <p style="margin: 0 0 10px 0; color: #888888; font-size: 14px;">© ${new Date().getFullYear()} Matchme. All rights reserved.</p>
                                 <p style="margin: 0; color: #aaaaaa; font-size: 12px;">This is an automated message, please do not reply to this email.</p>
                             </td>
                         </tr>
@@ -70,7 +70,7 @@ const sendEmail = async ({ to, subject, url }) => {
             from: `"Matchme" <${process.env.SMTP_USER}>`,
             to: to,
             subject: subject || "Complete your profile",
-            text: `Log in to Matchme: ${loginUrl}`,
+            text: `Log in to Matchme:`,
             html: htmlTemplate,
         });
 
