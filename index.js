@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 
 // Run CRON Jobs
 checkSubscription.start();
-matchCron();
+//matchCron();
 
 // initial socket
 initSocket(io);

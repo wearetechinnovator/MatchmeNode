@@ -63,6 +63,9 @@ const register = async (req, res) => {
             return res.status(500).json({ err: "Whatsapp number already exist" });
         }
 
+        // Token Hash
+        const hashToken = crypto.randomBytes(32).toString("hex");
+
         // insert data
         const insert = await usersModel.create({
             user_name, password, whatsapp_number, email, full_name, nick_name,
@@ -80,12 +83,22 @@ const register = async (req, res) => {
             how_often_you_eat_out, how_often_you_travel, prefered_social_event, city,
             whom_do_you_like_going_out_with, how_spiritual_are_you, how_religious_are_you,
             about_yourself, marital_status_from_year, marital_status_to_year,
-            subscription_end_date, is_subscribed, category, interests
+            subscription_end_date, is_subscribed, category, interests,
+            token_hash: hashToken
         });
 
         if (!insert) {
             return res.status(500).json({ err: "User not register" });
         }
+
+
+        // Send email
+        const URL = `${process.env.FRONT_URL}/login?token=${hashToken}&d=${btoa(insert._id)}`;
+        sendEmail({
+            to: email,
+            subject: "",
+            url: URL
+        })
 
         return res.status(200).json({
             message: "User created successfully",
@@ -702,30 +715,32 @@ const uploadAgreement = async (req, res) => {
 
 
 // Genarate HASH for login using URL;
-const loginHashGenarate = async (req, res)=>{
+const loginHashGenarate = async (req, res) => {
     const { userId } = req.body;
 
     if (!userId) {
         return res.status(400).json({ err: 'Userid is required' });
     }
 
-    
+
     try {
         // Genarate Hash
         const hashToken = crypto.randomBytes(32).toString("hex");
         const URL = `http://localhost:5173/login?token=${hashToken}&d=${btoa(userId)}`;
 
         // Update userModel
-        const update = await usersModel.updateOne({_id: userId}, {$set: {
-            token_hash: hashToken
-        }});
+        const update = await usersModel.updateOne({ _id: userId }, {
+            $set: {
+                token_hash: hashToken
+            }
+        });
 
         // Send to Admin
-        if(update.modifiedCount === 0){
-           return res.status(500).json({err: 'Hash not genarate'});
+        if (update.modifiedCount === 0) {
+            return res.status(500).json({ err: 'Hash not genarate' });
         }
 
-        return res.status(200).json({data: URL});
+        return res.status(200).json({ data: URL });
 
     } catch (error) {
         console.error("Error:", error);
