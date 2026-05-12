@@ -79,3 +79,8 @@ const sendEmail = async ({ to, subject, url }) => {
         throw err;
     }
 };
+
+
+module.exports = {
+    sendEmail
+}

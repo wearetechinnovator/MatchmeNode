@@ -13,7 +13,8 @@ const passwordGenerator = require("../helper/passGen");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
-const crypto = require('crypto')
+const crypto = require('crypto');
+const { sendEmail } = require("../services/sendEmail");
 
 
 
