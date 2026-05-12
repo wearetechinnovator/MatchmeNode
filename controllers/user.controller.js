@@ -239,7 +239,7 @@ const get = async (req, res) => {
 
 
 // :::::::::::: SET PROFILE PICTURES :::::::::::::
-const upload = async (req, res) => {
+const uploadImg = async (req, res) => {
     console.log(req.filePaths)
     if (!req.filePaths || Object.keys(req.filePaths).length < 1) {
         return res.status(400).json({ err: "No files uploaded" });
@@ -387,6 +387,6 @@ const viewPhoto = async (req, res) => {
 
 
 module.exports = {
-    update, login, get, upload, viewPhoto,
+    update, login, get, uploadImg, viewPhoto,
     uploadAgreement, viewAgreement
 }
