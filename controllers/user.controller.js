@@ -240,6 +240,7 @@ const get = async (req, res) => {
 
 // :::::::::::: SET PROFILE PICTURES :::::::::::::
 const upload = async (req, res) => {
+    console.log(req.filePaths)
     if (!req.filePaths || Object.keys(req.filePaths).length < 1) {
         return res.status(400).json({ err: "No files uploaded" });
     }
