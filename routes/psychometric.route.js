@@ -11,7 +11,7 @@ router
 
 router
     .route("/get")
-    .get(middleware, get);
+    .post(middleware, get);
 
 
 module.exports = router;

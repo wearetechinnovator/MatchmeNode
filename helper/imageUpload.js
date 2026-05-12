@@ -57,7 +57,6 @@ const imageUpload = (req, res, next) => {
         req.filePaths = {};
 
         fields.forEach(field => {
-            console.log(field);
             if (req.files[field]?.[0]) {
                 const filePath = req.files[field][0].path;
                 req.filePaths[field] = path.relative(path.join(__dirname, '../uploads'), filePath);
