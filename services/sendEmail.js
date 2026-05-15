@@ -18,7 +18,7 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
                         <!-- Logo Header -->
                         <tr>
                             <td style="background-color: #214A49; padding: 30px; text-align: center;">
-                                <img src="${logoUrl || 'https://silvercircleapi.matchmeglobal.com/logo.png'}" alt="MatchMe Silver Circle" style="max-width: 200px; height: auto; display: block; margin: 0 auto 15px auto;" />
+                                <img src="${'https://silvercircleapi.matchmeglobal.com/logo.png'}" alt="MatchMe Silver Circle" style="max-width: 200px; height: auto; display: block; margin: 0 auto 15px auto;" />
                                 <h1 style="margin: 0; color: #BFAE7D; font-size: 28px; font-weight: 600; letter-spacing: 1px;">MatchMe Silver Circle</h1>
                             </td>
                         </tr>

@@ -23,7 +23,7 @@ app.use(cors()); //Allow all origin;
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(express.static("uploads"));
-app.use(express.static("public"));
+app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.static("agreement"));
 app.use(express.static("user_agreements"));
 
