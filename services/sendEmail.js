@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async ({ to, subject, url, fullName }) => {
-    
+
     const htmlTemplate = `
     <!DOCTYPE html>
     <html lang="en">
@@ -46,7 +46,7 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
                                 <table role="presentation" style="margin: 30px 0;">
                                     <tr>
                                         <td align="center">
-                                            <a href="${url}" style="display: inline-block; padding: 16px 40px; background-color: #BFAE7D; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 6px;">Fill Your Information</a>
+                                          <p style="margin: 10px 0 0 0; color: #BFAE7D; font-size: 12px; word-break: break-all;">${url}</p>
                                         </td>
                                     </tr>
                                 </table>
@@ -71,10 +71,7 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
                                     9810069813 / 9818185905
                                 </p>
                                 
-                                <div style="margin: 30px 0; height: 1px; background-color: #e0e0e0;"></div>
-                                
-                                <p style="margin: 0; color: #888888; font-size: 13px; line-height: 1.6;">Or copy and paste this link into your browser:</p>
-                                <p style="margin: 10px 0 0 0; color: #BFAE7D; font-size: 12px; word-break: break-all;">${url}</p>
+                               
                             </td>
                         </tr>
                         
