@@ -26,7 +26,7 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
                         <!-- Main Content -->
                         <tr>
                             <td style="padding: 40px 30px;">
-                                <p style="margin: 0 0 20px 0; color: #214A49; font-size: 16px; font-weight: 600; text-align: center;">
+                                <p style="margin: 0 0 20px 0; color: #214A49; font-size: 16px; font-weight: 600;">
                                     Thank you for showing your interest in MatchMe Silver Circle!!
                                 </p>
                                 
@@ -45,7 +45,7 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
                                 <!-- CTA Button -->
                                 <table role="presentation" style="margin: 30px 0;">
                                     <tr>
-                                        <td align="center">
+                                        <td>
                                           <p style="margin: 10px 0 0 0; color: #BFAE7D; font-size: 12px; word-break: break-all;">${url}</p>
                                         </td>
                                     </tr>
@@ -104,7 +104,7 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
         const info = await transporter.sendMail({
             from: `"MatchMe Silver Circle" <${process.env.SMTP_USER}>`,
             to: to,
-            subject: subject || "Join MatchMe Silver Circle Network",
+            subject: subject || "Join MatchMe Silver Circle",
             text: `Dear ${fullName}, Thank you for showing interest in MatchMe Silver Circle. Please fill your information at: ${url}`,
             html: htmlTemplate,
         });
