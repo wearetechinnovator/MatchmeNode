@@ -75,13 +75,6 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
                             </td>
                         </tr>
                         
-                        <!-- Footer -->
-                        <tr>
-                            <td style="background-color: #f8f8f8; padding: 30px; text-align: center; border-top: 1px solid #e0e0e0;">
-                                <p style="margin: 0 0 10px 0; color: #888888; font-size: 14px;">© ${new Date().getFullYear()} MatchMe Silver Circle. All rights reserved.</p>
-                                <p style="margin: 0; color: #aaaaaa; font-size: 12px;">This is an automated message, please do not reply to this email.</p>
-                            </td>
-                        </tr>
                     </table>
                 </td>
             </tr>
