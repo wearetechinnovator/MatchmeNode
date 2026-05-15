@@ -7,6 +7,7 @@ const checkSubscription = require("./services/subscriptionCron");
 const { matchCron } = require("./services/matchCron");
 const PORT = 3000 || process.env.PORT;
 const cors = require("cors");
+const path = require("path");
 const morgan = require('morgan');
 const accessLogStream = require('./services/loger');
 const initSocket = require("./services/chat");
