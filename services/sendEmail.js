@@ -8,42 +8,80 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Matchme - Login</title>
+        <title>MatchMe Silver Circle</title>
     </head>
     <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
         <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f4f4f4;">
             <tr>
                 <td align="center" style="padding: 40px 0;">
                     <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <!-- Logo Header -->
                         <tr>
-                            <td style="background-color: #214A49; padding: 40px 30px; text-align: center;">
-                                <h1 style="margin: 0; color: #BFAE7D; font-size: 32px; font-weight: 600; letter-spacing: 1px;">Matchme</h1>
+                            <td style="background-color: #214A49; padding: 30px; text-align: center;">
+                                <img src="${logoUrl || 'https://silvercircleapi.matchmeglobal.com/logo.png'}" alt="MatchMe Silver Circle" style="max-width: 200px; height: auto; display: block; margin: 0 auto 15px auto;" />
+                                <h1 style="margin: 0; color: #BFAE7D; font-size: 28px; font-weight: 600; letter-spacing: 1px;">MatchMe Silver Circle</h1>
                             </td>
                         </tr>
+                        
+                        <!-- Main Content -->
                         <tr>
                             <td style="padding: 40px 30px;">
-                                <h2 style="margin: 0 0 20px 0; color: #214A49; font-size: 24px; font-weight: 600;">Welcome ${fullName}</h2>
-                                <p style="margin: 0 0 20px 0; color: #555555; font-size: 16px; line-height: 1.6;">
-                                    Click the button below to securely log in to your Matchme account. And complete your profile.
+                                <p style="margin: 0 0 20px 0; color: #214A49; font-size: 16px; font-weight: 600; text-align: center;">
+                                    Thank you for showing your interest in MatchMe Silver Circle!!
                                 </p>
+                                
+                                <p style="margin: 0 0 10px 0; color: #214A49; font-size: 16px; font-weight: 600;">
+                                    Dear ${fullName},
+                                </p>
+                                
+                                <p style="margin: 0 0 20px 0; color: #555555; font-size: 16px; line-height: 1.6;">
+                                    Greetings of the day!
+                                </p>
+                                
+                                <p style="margin: 0 0 25px 0; color: #555555; font-size: 16px; line-height: 1.6;">
+                                    Further to our interaction, if you are interested in our services, please fill your information on the below link and join the network.
+                                </p>
+                                
+                                <!-- CTA Button -->
                                 <table role="presentation" style="margin: 30px 0;">
                                     <tr>
                                         <td align="center">
-                                            <a href="${url}" style="display: inline-block; padding: 16px 40px; background-color: #BFAE7D; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 6px;">Log In to Matchme</a>
+                                            <a href="${url}" style="display: inline-block; padding: 16px 40px; background-color: #BFAE7D; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 6px;">Fill Your Information</a>
                                         </td>
                                     </tr>
                                 </table>
-                                <p style="margin: 20px 0 0 0; color: #888888; font-size: 14px; line-height: 1.6;">
-                                    If you didn't request this login link, please ignore this email or contact our support team if you have concerns.
+                                
+                                <p style="margin: 25px 0 20px 0; color: #555555; font-size: 16px; line-height: 1.6;">
+                                    You can pay our membership fee through cheque/bank transfer/UPI. Details for the same will be shared later.
                                 </p>
+                                
+                                <p style="margin: 20px 0 5px 0; color: #555555; font-size: 16px; line-height: 1.6;">
+                                    Thank and Regards
+                                </p>
+                                
+                                <p style="margin: 5px 0; color: #555555; font-size: 16px; line-height: 1.6;">
+                                    With all good wishes
+                                </p>
+                                
+                                <p style="margin: 15px 0 5px 0; color: #214A49; font-size: 16px; font-weight: 600;">
+                                    Mishi and Tania
+                                </p>
+                                
+                                <p style="margin: 0; color: #214A49; font-size: 15px;">
+                                    9810069813 / 9818185905
+                                </p>
+                                
                                 <div style="margin: 30px 0; height: 1px; background-color: #e0e0e0;"></div>
+                                
                                 <p style="margin: 0; color: #888888; font-size: 13px; line-height: 1.6;">Or copy and paste this link into your browser:</p>
                                 <p style="margin: 10px 0 0 0; color: #BFAE7D; font-size: 12px; word-break: break-all;">${url}</p>
                             </td>
                         </tr>
+                        
+                        <!-- Footer -->
                         <tr>
                             <td style="background-color: #f8f8f8; padding: 30px; text-align: center; border-top: 1px solid #e0e0e0;">
-                                <p style="margin: 0 0 10px 0; color: #888888; font-size: 14px;">© ${new Date().getFullYear()} Matchme. All rights reserved.</p>
+                                <p style="margin: 0 0 10px 0; color: #888888; font-size: 14px;">© ${new Date().getFullYear()} MatchMe Silver Circle. All rights reserved.</p>
                                 <p style="margin: 0; color: #aaaaaa; font-size: 12px;">This is an automated message, please do not reply to this email.</p>
                             </td>
                         </tr>
@@ -67,10 +105,10 @@ const sendEmail = async ({ to, subject, url, fullName }) => {
 
     try {
         const info = await transporter.sendMail({
-            from: `"Matchme" <${process.env.SMTP_USER}>`,
+            from: `"MatchMe Silver Circle" <${process.env.SMTP_USER}>`,
             to: to,
-            subject: subject || "Complete your profile",
-            text: `Log in to Matchme:`,
+            subject: subject || "Join MatchMe Silver Circle Network",
+            text: `Dear ${fullName}, Thank you for showing interest in MatchMe Silver Circle. Please fill your information at: ${url}`,
             html: htmlTemplate,
         });
 
